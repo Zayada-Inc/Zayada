@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ZayadaWebApi.Controllers
+namespace Zayada.Controllers
 {
     [ApiController]
     [Route("[controller]")]

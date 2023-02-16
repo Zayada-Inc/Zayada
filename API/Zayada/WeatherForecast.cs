@@ -1,4 +1,4 @@
-namespace ZayadaWebApi
+namespace Zayada
 {
     public class WeatherForecast
     {
