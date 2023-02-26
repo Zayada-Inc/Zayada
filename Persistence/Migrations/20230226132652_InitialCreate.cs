@@ -15,9 +15,10 @@ namespace Persistence.Migrations
                 name: "Gyms",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     GymName = table.Column<string>(type: "TEXT", nullable: false),
-                    GymAddress = table.Column<string>(type: "TEXT", nullable: true)
+                    GymAddress = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -35,7 +36,7 @@ namespace Persistence.Migrations
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     ImageUrl = table.Column<string>(type: "TEXT", nullable: true),
                     Certifications = table.Column<string>(type: "TEXT", nullable: true),
-                    GymId = table.Column<Guid>(type: "TEXT", nullable: true)
+                    GymId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {

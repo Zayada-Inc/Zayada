@@ -19,11 +19,12 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entities.Gym", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("GymAddress")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("GymName")
@@ -50,8 +51,8 @@ namespace Persistence.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("GymId")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("GymId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("TEXT");
