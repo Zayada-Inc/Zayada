@@ -4,7 +4,17 @@ import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+<<<<<<< Updated upstream
 
+=======
+  const config = {
+    headers: {
+      "Access-Control-Allow-Origin": '*',
+    }
+  }
+  //test
+  // axios.get('http://localhost:5000/api/PersonalTrainer/personalTrainers', config).then((res: any) => console.log(res.data))
+>>>>>>> Stashed changes
   return (
     <div className="App">
       <div>
