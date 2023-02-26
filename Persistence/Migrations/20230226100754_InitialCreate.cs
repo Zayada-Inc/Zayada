@@ -12,6 +12,19 @@ namespace Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Gyms",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    GymName = table.Column<string>(type: "TEXT", nullable: false),
+                    GymAddress = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Gyms", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PersonalTrainers",
                 columns: table => new
                 {
@@ -21,12 +34,23 @@ namespace Persistence.Migrations
                     InstagramLink = table.Column<string>(type: "TEXT", nullable: true),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     ImageUrl = table.Column<string>(type: "TEXT", nullable: true),
-                    Certifications = table.Column<string>(type: "TEXT", nullable: true)
+                    Certifications = table.Column<string>(type: "TEXT", nullable: true),
+                    GymId = table.Column<Guid>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PersonalTrainers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PersonalTrainers_Gyms_GymId",
+                        column: x => x.GymId,
+                        principalTable: "Gyms",
+                        principalColumn: "Id");
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PersonalTrainers_GymId",
+                table: "PersonalTrainers",
+                column: "GymId");
         }
 
         /// <inheritdoc />
@@ -34,6 +58,9 @@ namespace Persistence.Migrations
         {
             migrationBuilder.DropTable(
                 name: "PersonalTrainers");
+
+            migrationBuilder.DropTable(
+                name: "Gyms");
         }
     }
 }

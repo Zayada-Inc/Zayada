@@ -11,7 +11,7 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230220192741_InitialCreate")]
+    [Migration("20230226100754_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -19,6 +19,24 @@ namespace Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.3");
+
+            modelBuilder.Entity("Domain.Entities.Gym", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("GymAddress")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("GymName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Gyms");
+                });
 
             modelBuilder.Entity("Domain.Entities.PersonalTrainer", b =>
                 {
@@ -35,6 +53,9 @@ namespace Persistence.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("GymId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("ImageUrl")
                         .HasColumnType("TEXT");
 
@@ -46,7 +67,18 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("GymId");
+
                     b.ToTable("PersonalTrainers");
+                });
+
+            modelBuilder.Entity("Domain.Entities.PersonalTrainer", b =>
+                {
+                    b.HasOne("Domain.Entities.Gym", "Gym")
+                        .WithMany()
+                        .HasForeignKey("GymId");
+
+                    b.Navigation("Gym");
                 });
 #pragma warning restore 612, 618
         }
