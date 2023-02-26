@@ -1,28 +1,16 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
-import axios from 'axios'
 
 function App() {
   const [count, setCount] = useState(0)
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-
-=======
-=======
->>>>>>> 9b29f968a4e757918a6c9e3a397e78d3eb8985ca
   const config = {
     headers: {
       "Access-Control-Allow-Origin": '*',
     }
   }
-<<<<<<< HEAD
   //test
   // axios.get('http://localhost:5000/api/PersonalTrainer/personalTrainers', config).then((res: any) => console.log(res.data))
->>>>>>> Stashed changes
-=======
-  axios.get('http://localhost:5000/api/PersonalTrainer/personalTrainers', config).then((res: any) => console.log(res.data))
->>>>>>> 9b29f968a4e757918a6c9e3a397e78d3eb8985ca
   return (
     <div className="App">
       <div>
