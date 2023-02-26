@@ -1,10 +1,16 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
+import axios from 'axios'
 
 function App() {
   const [count, setCount] = useState(0)
-
+  const config = {
+    headers: {
+      "Access-Control-Allow-Origin": '*',
+    }
+  }
+  axios.get('http://localhost:5000/api/PersonalTrainer/personalTrainers', config).then((res: any) => console.log(res.data))
   return (
     <div className="App">
       <div>
