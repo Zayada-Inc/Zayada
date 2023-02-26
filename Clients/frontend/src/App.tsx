@@ -10,7 +10,7 @@ function App() {
       "Access-Control-Allow-Origin": '*',
     }
   }
-  axios.get('http://localhost:5000/api/PersonalTrainer/personalTrainers', config).then((res: any) => console.log(res.data))
+  // axios.get('http://localhost:5000/api/PersonalTrainer/personalTrainers', config).then((res: any) => console.log(res.data))
   return (
     <div className="App">
       <div>
