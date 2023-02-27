@@ -27,17 +27,17 @@ namespace Domain.Specifications.PersonalTrainers
             if (!string.IsNullOrEmpty(personalTrainersParam.Sort))
             {
                 switch (personalTrainersParam.Sort)
-                {/*
-                    case "priceAsc":
-                        AddOrderBy(p => p.Price);
+                {
+                    case "emailAsc":
+                        AddOrderBy(p => p.Email);
                         break;
-                    case "priceDesc":
-                        AddOrderByDescending(p => p.Price);
+                    case "emailDesc":
+                        AddOrderByDescending(p => p.Email);
                         break;
                     case "idAsc":
                         AddOrderBy(p => p.Id);
                         break;
-                    */
+                    
                     default:
                         AddOrderBy(n => n.Name);
                         break;
