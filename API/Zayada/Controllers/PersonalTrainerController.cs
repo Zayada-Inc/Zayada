@@ -1,48 +1,56 @@
-﻿using Domain.Entities;
+﻿using AutoMapper;
+using Domain.Entities;
+using Domain.Interfaces;
+using Domain.Specifications.PersonalTrainers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using System.Net.Http.Headers;
+using ZayadaAPI.Dtos;
+using ZayadaAPI.Helpers;
 
 namespace ZayadaAPI.Controllers
 {
     public class PersonalTrainerController: BaseApiController
     {
-        private readonly DataContext _dataContext;
         private readonly IWebHostEnvironment _hostingEnvironment;
-        public PersonalTrainerController(DataContext dataContext, IWebHostEnvironment webHostEnvironment)
+        private readonly IGenericRepository<PersonalTrainer> _personalTrainerRepository;
+        private readonly IMapper _mapper;
+        public PersonalTrainerController(IWebHostEnvironment webHostEnvironment, IGenericRepository<PersonalTrainer> personalTrainerRepo,IMapper mapper)
         {
-            _dataContext = dataContext;
             _hostingEnvironment = webHostEnvironment;
+            _personalTrainerRepository = personalTrainerRepo;
+            _mapper = mapper;
         }
 
         [HttpGet("personalTrainers")]
-        public async Task<ActionResult<List<PersonalTrainer>>> GetAllPersonalTrainers()
+        public async Task<ActionResult<Pagination<PersonalTrainersToReturnDto>>> GetTrainers([FromQuery] PersonalTrainersParam personalTrainersParam)
         {
-          return await _dataContext.PersonalTrainers.Include(x => x.Gym).ToListAsync();
-        }
-
-        [HttpPost("personalTrainers")]
-        public async Task<ActionResult<List<PersonalTrainer>>> AddPersonalTrainer([FromQuery]PersonalTrainerDto personalTrainer)
-        {
-            if(personalTrainer == null) 
-                return BadRequest();
-            // map personal trainer dto to personal trainer
-            var personalTrainerMap = new PersonalTrainer
+            var spec = new PersonalTrainersSpecification(personalTrainersParam);
+            var countSpec = new PersonalTrainersWithFilterForCountSpecification(personalTrainersParam);
+            var totalItems = await _personalTrainerRepository.CountAsync(countSpec);
+            var trainers = await _personalTrainerRepository.ListAsync(spec);
+            var data = _mapper.Map<IReadOnlyList<PersonalTrainer>,IReadOnlyList<PersonalTrainersToReturnDto>>(trainers);
+            if(trainers.Count == 0)
             {
-                Name = personalTrainer.Name,
-                Email = personalTrainer.Email,
-                InstagramLink = personalTrainer.InstagramLink,
-                Description = personalTrainer.Description,
-                ImageUrl = personalTrainer.ImageUrl,
-                Certifications = personalTrainer.Certifications,
-                GymId = personalTrainer.GymId
-            };
-               _dataContext.PersonalTrainers.Add(personalTrainerMap);
-            await   _dataContext.SaveChangesAsync();
-            return Ok(personalTrainer);
+                return NotFound(404);
+            }
+            return Ok(new Pagination<PersonalTrainersToReturnDto>(personalTrainersParam.PageIndex,personalTrainersParam.PageSize,totalItems,data));
         }
+        
+        [HttpPost("personalTrainers")]
+        public async Task<ActionResult<PersonalTrainersToPost>> AddTrainer([FromQuery] PersonalTrainersToPost personalTrainer)
+        {
+          var newTrainer = _mapper.Map<PersonalTrainersToPost, PersonalTrainer>(personalTrainer);
+            if(string.IsNullOrEmpty(newTrainer.Name))
+            {
+                return BadRequest(400);
+            }
+            await _personalTrainerRepository.AddAsync(newTrainer);
+            return Ok(newTrainer);
 
+        }
+/*
         [HttpGet("gyms")]
 
         public async Task<ActionResult<List<Gym>>> GetAllGyms()
@@ -62,7 +70,7 @@ namespace ZayadaAPI.Controllers
             await _dataContext.SaveChangesAsync();
             return Ok(gym);
         }
-
+        */
         [HttpPost("uploadTrainerProfileImage")]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
@@ -97,18 +105,7 @@ namespace ZayadaAPI.Controllers
                 return StatusCode(500, ex);
             }
         }
+  
     }
 
-    //to be removed
-
-    public class PersonalTrainerDto
-    {
-        public string? Name { get; set; }
-        public string? Email { get; set; }
-        public string? InstagramLink { get; set; }
-        public string? Description { get; set; }
-        public string? ImageUrl { get; set; }
-        public string? Certifications { get; set; }
-        public int GymId { get; set; }
-    }
 }
