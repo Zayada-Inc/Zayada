@@ -1,7 +1,6 @@
 import { useState } from 'react';
-
+import reactLogo from './assets/react.svg';
 import './App.css';
-import Test from 'components/Test';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -10,9 +9,8 @@ function App() {
       'Access-Control-Allow-Origin': '*',
     },
   };
-
+  //test
   // axios.get('http://localhost:5000/api/PersonalTrainer/personalTrainers', config).then((res: any) => console.log(res.data))
-
   return (
     <div className='App'>
       <Test />

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Gym: EntityBase
+    public class Gym
     {
+        public int Id { get; set; }
         public string GymName { get; set; }
         public string GymAddress { get; set; }
     }
