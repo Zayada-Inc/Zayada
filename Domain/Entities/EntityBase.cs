@@ -9,8 +9,7 @@ namespace Domain.Entities
 {
     public class EntityBase
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         
     }
 }

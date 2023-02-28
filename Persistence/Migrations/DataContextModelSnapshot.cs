@@ -38,9 +38,9 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entities.PersonalTrainer", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Certifications")
                         .HasColumnType("TEXT");
