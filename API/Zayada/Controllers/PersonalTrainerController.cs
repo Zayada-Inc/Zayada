@@ -5,6 +5,7 @@ using Domain.Specifications.PersonalTrainers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using System.Collections.Generic;
 using System.Net.Http.Headers;
 using ZayadaAPI.Dtos;
 using ZayadaAPI.Helpers;
@@ -15,12 +16,14 @@ namespace ZayadaAPI.Controllers
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IGenericRepository<PersonalTrainer> _personalTrainerRepository;
+        private readonly IGenericRepository<Gym> _gymRepository;
         private readonly IMapper _mapper;
-        public PersonalTrainerController(IWebHostEnvironment webHostEnvironment, IGenericRepository<PersonalTrainer> personalTrainerRepo,IMapper mapper)
+        public PersonalTrainerController(IWebHostEnvironment webHostEnvironment, IGenericRepository<PersonalTrainer> personalTrainerRepo,IMapper mapper, IGenericRepository<Gym> gymRepository)
         {
             _hostingEnvironment = webHostEnvironment;
             _personalTrainerRepository = personalTrainerRepo;
             _mapper = mapper;
+            _gymRepository = gymRepository;
         }
 
         [HttpGet("personalTrainers")]
@@ -50,27 +53,56 @@ namespace ZayadaAPI.Controllers
             return Ok(newTrainer);
 
         }
-/*
-        [HttpGet("gyms")]
 
-        public async Task<ActionResult<List<Gym>>> GetAllGyms()
+        [HttpGet("{id}")]
+        public async Task<ActionResult<PersonalTrainer>> GetTrainerById(int id)
         {
-            var gyms = await _dataContext.Gyms.ToListAsync();
-            if(gyms == null)
-                return BadRequest();
-            return    Ok(gyms);
+            var spec = new PersonalTrainersSpecification(id);
+            var trainer = await _personalTrainerRepository.GetEntityWithSpec(spec);
+            if(trainer == null)
+            {
+                return NotFound(404);
+            }
+            return Ok(_mapper.Map<PersonalTrainer,PersonalTrainersToReturnDto>(trainer));
         }
 
-        [HttpPost("gyms")]
-        public async Task<ActionResult<List<Gym>>> AddGym([FromQuery]Gym gym)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteTrainer(int id)
         {
-            if(gym == null)
-                return BadRequest();
-            await _dataContext.Gyms.AddAsync(gym);
-            await _dataContext.SaveChangesAsync();
-            return Ok(gym);
+            var spec = new PersonalTrainersSpecification(id);
+            var trainer = await _personalTrainerRepository.GetEntityWithSpec(spec);
+            if(trainer == null)
+            {
+                return NotFound(404);
+            }
+            await _personalTrainerRepository.DeleteAsync(spec);
+            return Ok(200);
         }
-        */
+
+        [HttpGet("Gyms")]
+        public async Task<ActionResult<IReadOnlyList<GymsToReturnDto>>> GetGyms()
+        {
+            var gyms = await _gymRepository.ListAllAsync();
+            if(gyms.Count == 0)
+            {
+                return NotFound(404);
+            }
+            var data = _mapper.Map<IReadOnlyList<Gym>, IReadOnlyList<GymsToReturnDto>>(gyms);
+            return Ok(data);
+        }
+
+        [HttpPost("Gym")]
+        public async Task<ActionResult<GymsToPostDto>> AddGym([FromQuery] GymsToPostDto gym)
+        {
+           var mappedGym = _mapper.Map<GymsToPostDto, Gym>(gym);
+            if(string.IsNullOrEmpty(gym.GymName))
+            {
+                return BadRequest(400);
+            }
+            await _gymRepository.AddAsync(mappedGym);
+            return Ok(mappedGym);
+        }
+       
         [HttpPost("uploadTrainerProfileImage")]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
@@ -107,5 +139,5 @@ namespace ZayadaAPI.Controllers
         }
   
     }
-    ////////
+
 }

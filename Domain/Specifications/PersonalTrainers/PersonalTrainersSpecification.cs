@@ -12,7 +12,7 @@ namespace Domain.Specifications.PersonalTrainers
         public PersonalTrainersSpecification() { 
         AddInclude(x => x.Gym);
         }
-        public PersonalTrainersSpecification(Guid id): base(x => x.Id == id)
+        public PersonalTrainersSpecification(int id): base(x => x.Id == id)
         {
         }
 
