@@ -3,7 +3,7 @@ import { ContentLayout } from 'components/Layout';
 export const Dashboard = () => {
   return (
     <ContentLayout>
-      <div> dashboard content </div>
+      <div className='border h-full'> dashboard content </div>
     </ContentLayout>
   );
 };
