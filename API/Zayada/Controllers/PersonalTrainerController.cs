@@ -15,25 +15,20 @@ namespace ZayadaAPI.Controllers
     public class PersonalTrainerController: BaseApiController
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
-        private readonly IGenericRepository<PersonalTrainer> _personalTrainerRepository;
-        private readonly IGenericRepository<Gym> _gymRepository;
-        private readonly IMapper _mapper;
-        public PersonalTrainerController(IWebHostEnvironment webHostEnvironment, IGenericRepository<PersonalTrainer> personalTrainerRepo,IMapper mapper, IGenericRepository<Gym> gymRepository)
+        public PersonalTrainerController(IWebHostEnvironment webHostEnvironment)
         {
             _hostingEnvironment = webHostEnvironment;
-            _personalTrainerRepository = personalTrainerRepo;
-            _mapper = mapper;
-            _gymRepository = gymRepository;
+
         }
 
-        [HttpGet("personalTrainers")]
+        [HttpGet]
         public async Task<ActionResult<Pagination<PersonalTrainersToReturnDto>>> GetTrainers([FromQuery] PersonalTrainersParam personalTrainersParam)
         {
             var spec = new PersonalTrainersSpecification(personalTrainersParam);
             var countSpec = new PersonalTrainersWithFilterForCountSpecification(personalTrainersParam);
-            var totalItems = await _personalTrainerRepository.CountAsync(countSpec);
-            var trainers = await _personalTrainerRepository.ListAsync(spec);
-            var data = _mapper.Map<IReadOnlyList<PersonalTrainer>,IReadOnlyList<PersonalTrainersToReturnDto>>(trainers);
+            var totalItems = await PersonalTrainerRepository.CountAsync(countSpec);
+            var trainers = await PersonalTrainerRepository.ListAsync(spec);
+            var data = Mapper.Map<IReadOnlyList<PersonalTrainer>,IReadOnlyList<PersonalTrainersToReturnDto>>(trainers);
             if(trainers.Count == 0)
             {
                 return NotFound(404);
@@ -41,15 +36,15 @@ namespace ZayadaAPI.Controllers
             return Ok(new Pagination<PersonalTrainersToReturnDto>(personalTrainersParam.PageIndex,personalTrainersParam.PageSize,totalItems,data));
         }
         
-        [HttpPost("personalTrainers")]
+        [HttpPost]
         public async Task<ActionResult<PersonalTrainersToPost>> AddTrainer([FromQuery] PersonalTrainersToPost personalTrainer)
         {
-          var newTrainer = _mapper.Map<PersonalTrainersToPost, PersonalTrainer>(personalTrainer);
+          var newTrainer = Mapper.Map<PersonalTrainersToPost, PersonalTrainer>(personalTrainer);
             if(string.IsNullOrEmpty(newTrainer.Name))
             {
                 return BadRequest(400);
             }
-            await _personalTrainerRepository.AddAsync(newTrainer);
+            await PersonalTrainerRepository.AddAsync(newTrainer);
             return Ok(newTrainer);
 
         }
@@ -58,49 +53,25 @@ namespace ZayadaAPI.Controllers
         public async Task<ActionResult<PersonalTrainer>> GetTrainerById(int id)
         {
             var spec = new PersonalTrainersSpecification(id);
-            var trainer = await _personalTrainerRepository.GetEntityWithSpec(spec);
+            var trainer = await PersonalTrainerRepository.GetEntityWithSpec(spec);
             if(trainer == null)
             {
                 return NotFound(404);
             }
-            return Ok(_mapper.Map<PersonalTrainer,PersonalTrainersToReturnDto>(trainer));
+            return Ok(Mapper.Map<PersonalTrainer,PersonalTrainersToReturnDto>(trainer));
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteTrainer(int id)
         {
             var spec = new PersonalTrainersSpecification(id);
-            var trainer = await _personalTrainerRepository.GetEntityWithSpec(spec);
+            var trainer = await PersonalTrainerRepository.GetEntityWithSpec(spec);
             if(trainer == null)
             {
                 return NotFound(404);
             }
-            await _personalTrainerRepository.DeleteAsync(spec);
+            await PersonalTrainerRepository.DeleteAsync(spec);
             return Ok(200);
-        }
-
-        [HttpGet("Gyms")]
-        public async Task<ActionResult<IReadOnlyList<GymsToReturnDto>>> GetGyms()
-        {
-            var gyms = await _gymRepository.ListAllAsync();
-            if(gyms.Count == 0)
-            {
-                return NotFound(404);
-            }
-            var data = _mapper.Map<IReadOnlyList<Gym>, IReadOnlyList<GymsToReturnDto>>(gyms);
-            return Ok(data);
-        }
-
-        [HttpPost("Gym")]
-        public async Task<ActionResult<GymsToPostDto>> AddGym([FromQuery] GymsToPostDto gym)
-        {
-           var mappedGym = _mapper.Map<GymsToPostDto, Gym>(gym);
-            if(string.IsNullOrEmpty(gym.GymName))
-            {
-                return BadRequest(400);
-            }
-            await _gymRepository.AddAsync(mappedGym);
-            return Ok(mappedGym);
         }
        
         [HttpPost("uploadTrainerProfileImage")]
