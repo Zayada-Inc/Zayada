@@ -1,6 +1,8 @@
-﻿using Domain.Interfaces;
-using Microsoft.AspNetCore.Mvc;
+﻿using Application.Gyms;
+using Domain.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Persistence.Data.Repository;
+using ZayadaAPI.Helpers;
 
 namespace ZayadaAPI.Extensions
 {
@@ -10,6 +12,9 @@ namespace ZayadaAPI.Extensions
         {
 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddAutoMapper(typeof(MappingProfiles));
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(GymsList.Handler).Assembly));
+
 
         }
     }

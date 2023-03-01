@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Gyms;
+using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using ZayadaAPI.Dtos;
 
@@ -10,12 +11,24 @@ namespace ZayadaAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<GymsToReturnDto>>> GetGyms()
         {
-            var gyms = await GymRepository.ListAllAsync();
+            var gyms = await Mediator.Send(new GymsList.Query());
             if (gyms.Count == 0)
             {
                 return NotFound(404);
             }
             var data = Mapper.Map<IReadOnlyList<Gym>, IReadOnlyList<GymsToReturnDto>>(gyms);
+            return Ok(data);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<GymsToReturnDto>> GetGymById(int id)
+        {
+            var gym = await Mediator.Send(new GymById.Query { Id = id });
+            if (gym == null)
+            {
+                return NotFound(404);
+            }
+            var data = Mapper.Map<Gym, GymsToReturnDto>(gym);
             return Ok(data);
         }
 
@@ -27,8 +40,8 @@ namespace ZayadaAPI.Controllers
             {
                 return BadRequest(400);
             }
-            await GymRepository.AddAsync(mappedGym);
-            return Ok(mappedGym);
+            await Mediator.Send(new GymCreate.Command { Gym = mappedGym });
+            return Ok();
         }
     }
 }
