@@ -1,4 +1,4 @@
-﻿namespace ZayadaAPI.Dtos
+﻿namespace Application.Dtos
 {
     public class GymsToPostDto
     {

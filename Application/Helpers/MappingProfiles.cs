@@ -1,9 +1,8 @@
-﻿using AutoMapper;
+﻿using Application.Dtos;
+using AutoMapper;
 using Domain.Entities;
-using ZayadaAPI.Controllers;
-using ZayadaAPI.Dtos;
 
-namespace ZayadaAPI.Helpers
+namespace Application.Helpers
 {
     public class MappingProfiles: Profile
     {

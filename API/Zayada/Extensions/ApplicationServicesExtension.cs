@@ -1,8 +1,7 @@
 ﻿using Application.Gyms;
 using Domain.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 using Persistence.Data.Repository;
-using ZayadaAPI.Helpers;
+using Application.Helpers;
 
 namespace ZayadaAPI.Extensions
 {

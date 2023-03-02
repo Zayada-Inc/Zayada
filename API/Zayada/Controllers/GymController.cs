@@ -1,7 +1,6 @@
 ﻿using Application.Gyms;
-using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using ZayadaAPI.Dtos;
+using Application.Dtos;
 
 namespace ZayadaAPI.Controllers
 {
@@ -16,8 +15,8 @@ namespace ZayadaAPI.Controllers
             {
                 return NotFound(404);
             }
-            var data = Mapper.Map<IReadOnlyList<Gym>, IReadOnlyList<GymsToReturnDto>>(gyms);
-            return Ok(data);
+
+            return Ok(gyms);
         }
 
         [HttpGet("{id}")]
@@ -28,19 +27,18 @@ namespace ZayadaAPI.Controllers
             {
                 return NotFound(404);
             }
-            var data = Mapper.Map<Gym, GymsToReturnDto>(gym);
-            return Ok(data);
+
+            return Ok(gym);
         }
 
         [HttpPost]
         public async Task<ActionResult<GymsToPostDto>> AddGym([FromQuery] GymsToPostDto gym)
         {
-            var mappedGym = Mapper.Map<GymsToPostDto, Gym>(gym);
             if (string.IsNullOrEmpty(gym.GymName))
             {
                 return BadRequest(400);
             }
-            await Mediator.Send(new GymCreate.Command { Gym = mappedGym });
+            await Mediator.Send(new GymCreate.Command { Gym = gym });
             return Ok();
         }
     }
