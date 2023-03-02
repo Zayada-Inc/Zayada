@@ -8,8 +8,7 @@
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }
         public string? Certifications { get; set; }
+        public int? GymId { get; set; }
         public Gym Gym { get; set; }
-        public int? GymId { get; set;}
-
     }
 }

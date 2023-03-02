@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Persistence.Data.Repository
 {
@@ -14,7 +15,7 @@ namespace Persistence.Data.Repository
 
         public async Task<T> GetByIdAsync(int id)
         {
-            return await _context.Set<T>().FindAsync(id);
+            return await _context.Set<T>().FirstOrDefaultAsync( x => x.Id ==id);
         }
 
         public async Task<IReadOnlyList<T>> ListAllAsync()
