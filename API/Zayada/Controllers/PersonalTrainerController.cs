@@ -68,31 +68,31 @@ namespace ZayadaAPI.Controllers
         }
        
         [HttpPost("uploadTrainerProfileImageSmartCrop")]
-        public async Task<IActionResult> UploadImageSmartCrop(IFormFile file, int height, int width)
+        public async Task<IActionResult> UploadImageSmartCrop([FromQuery] PersonalTrainerImageParams personalTrainerImageParams )
         {
             try
             {
-                if (!file.ContentType.Contains("image"))
+                if (!personalTrainerImageParams.File.ContentType.Contains("image"))
                 {
                     return BadRequest("The file is not an image");
                 }
-                if (!file.FileName.EndsWith(".png") && !file.FileName.EndsWith(".jpg") && !file.FileName.EndsWith(".jpeg"))
+                if (!personalTrainerImageParams.File.FileName.EndsWith(".png") && !personalTrainerImageParams.File.FileName.EndsWith(".jpg") && !personalTrainerImageParams.File.FileName.EndsWith(".jpeg"))
                 {
                     return BadRequest("The file extension is not png or jpg");
                 }
-                if (file.Length > 0)
+                if (personalTrainerImageParams.File.Length > 0)
                 {
-                    string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName
+                    string fileName = ContentDispositionHeaderValue.Parse(personalTrainerImageParams.File.ContentDisposition).FileName
                         .Trim('"');
-                    fileName = Path.ChangeExtension(fileName, ".png");
+
                     string fullPath = Path.Combine(_hostingEnvironment.WebRootPath, "Files/Images", fileName);
 
-                    var result = new ImageCrop(width, height).Crop(file.OpenReadStream());
+                    var result = new ImageCrop(personalTrainerImageParams.Width, personalTrainerImageParams.Height).Crop(personalTrainerImageParams.File.OpenReadStream());
 
-                        using(Image image = Image.Load(file.OpenReadStream()))
+                        using(Image image = Image.Load(personalTrainerImageParams.File.OpenReadStream()))
                         {
                             image.Mutate(x => x.Crop(result.Area));
-                           
+                            image.Mutate(x => x.Resize(personalTrainerImageParams.Width, personalTrainerImageParams.Height));
                             await image.SaveAsPngAsync(fullPath);
                         }
                 
@@ -146,4 +146,11 @@ namespace ZayadaAPI.Controllers
 
     }
 
+}
+
+public class PersonalTrainerImageParams
+{
+    public IFormFile? File { get; set; }
+    public int Height { get; set; } = 200;
+    public int Width { get; set; } = 200;
 }
