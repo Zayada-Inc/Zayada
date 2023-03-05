@@ -68,7 +68,7 @@ namespace ZayadaAPI.Controllers
         }
        
         [HttpPost("uploadTrainerProfileImageSmartCrop")]
-        public async Task<IActionResult> UploadImageSmartCrop(IFormFile file)
+        public async Task<IActionResult> UploadImageSmartCrop(IFormFile file, int height, int width)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace ZayadaAPI.Controllers
                     fileName = Path.ChangeExtension(fileName, ".png");
                     string fullPath = Path.Combine(_hostingEnvironment.WebRootPath, "Files/Images", fileName);
 
-                    var result = new ImageCrop(200, 200).Crop(file.OpenReadStream());
+                    var result = new ImageCrop(width, height).Crop(file.OpenReadStream());
 
                         using(Image image = Image.Load(file.OpenReadStream()))
                         {
