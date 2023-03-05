@@ -1,4 +1,4 @@
-﻿namespace ZayadaAPI.Helpers
+﻿namespace Domain.Helpers
 {
     public class Pagination<T> where T : class
     {
