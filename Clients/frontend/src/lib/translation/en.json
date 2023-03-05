@@ -1,5 +1,8 @@
 {
     "dashboard": {
         "welcomeBack": "Welcome back"
+    },
+    "button": {
+        "viewProfile": "View Profile"
     }
 }
