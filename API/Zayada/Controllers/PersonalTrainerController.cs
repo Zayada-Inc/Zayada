@@ -1,9 +1,12 @@
 ﻿using Application.Dtos;
 using Application.PersonalTrainers;
+using BrianMed.SmartCrop;
 using Domain.Entities;
 using Domain.Helpers;
 using Domain.Specifications.PersonalTrainers;
 using Microsoft.AspNetCore.Mvc;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 using System.Net.Http.Headers;
 
 namespace ZayadaAPI.Controllers
@@ -64,6 +67,47 @@ namespace ZayadaAPI.Controllers
             return BadRequest();
         }
        
+        [HttpPost("uploadTrainerProfileImageSmartCrop")]
+        public async Task<IActionResult> UploadImageSmartCrop(IFormFile file)
+        {
+            try
+            {
+                if (!file.ContentType.Contains("image"))
+                {
+                    return BadRequest("The file is not an image");
+                }
+                if (!file.FileName.EndsWith(".png") && !file.FileName.EndsWith(".jpg") && !file.FileName.EndsWith(".jpeimageg"))
+                {
+                    return BadRequest("The file extension is not png or jpg");
+                }
+                if (file.Length > 0)
+                {
+                    string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName
+                        .Trim('"');
+                    string fullPath = Path.Combine(_hostingEnvironment.WebRootPath, "Files/Images", fileName);
+
+                    var result = new ImageCrop(200, 200).Crop(file.OpenReadStream());
+
+                        using(Image image = Image.Load(file.OpenReadStream()))
+                        {
+
+                            image.Mutate(x => x.Crop(result.Area));
+                            await image.SaveAsPngAsync(fullPath);
+                        }
+                
+                    return Ok(new { fileName });
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
         [HttpPost("uploadTrainerProfileImage")]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
@@ -73,7 +117,7 @@ namespace ZayadaAPI.Controllers
                 {
                     return BadRequest("The file is not an image");
                 }
-                if (!file.FileName.EndsWith(".png") && !file.FileName.EndsWith(".jpg"))
+                if (!file.FileName.EndsWith(".png") && !file.FileName.EndsWith(".jpg") || file.FileName.EndsWith(".jpg"))
                 {
                     return BadRequest("The file extension is not png or jpg");
                 }
@@ -98,7 +142,7 @@ namespace ZayadaAPI.Controllers
                 return StatusCode(500, ex);
             }
         }
-  
+
     }
 
 }
