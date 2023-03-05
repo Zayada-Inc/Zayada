@@ -76,7 +76,7 @@ namespace ZayadaAPI.Controllers
                 {
                     return BadRequest("The file is not an image");
                 }
-                if (!file.FileName.EndsWith(".png") && !file.FileName.EndsWith(".jpg") && !file.FileName.EndsWith(".jpeimageg"))
+                if (!file.FileName.EndsWith(".png") && !file.FileName.EndsWith(".jpg") && !file.FileName.EndsWith(".jpeg"))
                 {
                     return BadRequest("The file extension is not png or jpg");
                 }
@@ -84,14 +84,15 @@ namespace ZayadaAPI.Controllers
                 {
                     string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName
                         .Trim('"');
+                    fileName = Path.ChangeExtension(fileName, ".png");
                     string fullPath = Path.Combine(_hostingEnvironment.WebRootPath, "Files/Images", fileName);
 
                     var result = new ImageCrop(200, 200).Crop(file.OpenReadStream());
 
                         using(Image image = Image.Load(file.OpenReadStream()))
                         {
-
                             image.Mutate(x => x.Crop(result.Area));
+                           
                             await image.SaveAsPngAsync(fullPath);
                         }
                 
