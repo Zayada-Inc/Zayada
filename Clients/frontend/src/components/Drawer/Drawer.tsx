@@ -1,7 +1,8 @@
-import { Logo } from 'components/Logo';
+import { useState } from 'react';
 import { FiSettings } from 'react-icons/fi';
 import { RxExit } from 'react-icons/rx';
-import { useState } from 'react';
+
+import { Logo } from 'components/Logo';
 import { Modal } from 'components/Headless';
 
 export const Drawer = () => {
