@@ -1,3 +1,4 @@
+import { Drawer } from 'components/Drawer';
 import { Navbar } from 'components/Navbar';
 
 interface ContentLayoutProps {
@@ -7,7 +8,7 @@ interface ContentLayoutProps {
 export const ContentLayout = ({ children }: ContentLayoutProps) => {
   return (
     <div className='grid grid-cols-[4%_1fr]'>
-      <div className='text-white bg-dark-color'>drawer</div>
+      <Drawer />
       <div className='flex flex-col h-screen'>
         <Navbar />
         <div className='basis-full'>{children}</div>

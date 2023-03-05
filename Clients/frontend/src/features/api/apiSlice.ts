@@ -8,7 +8,7 @@ export const apiSlice = createApi({
   endpoints: (builder) => ({
     getPersonalTrainers: builder.query<any, void>({
       query: () => '/PersonalTrainer',
-      //   providesTags: ['PT'],
+      // providesTags: ['PT'],
       // transformResponse: (res: any) => res.data,
     }),
   }),

@@ -7,13 +7,13 @@ export interface TrainersProps {
 
 export const Trainers = ({ numOfCards }: TrainersProps) => {
   const { data: res, isLoading } = useGetPersonalTrainersQuery();
-  console.log(res?.data);
+
   if (isLoading) {
     return <p>loading...</p>;
   }
 
   return (
-    <div className='flex gap-12 ml-3 border-2 items-center'>
+    <div className='flex items-center gap-12 ml-3'>
       {res?.data.map((trainer: any, i: number) => {
         if (i >= numOfCards) {
           console.log('aici');
