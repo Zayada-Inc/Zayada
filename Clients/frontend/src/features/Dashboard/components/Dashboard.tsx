@@ -10,7 +10,7 @@ export const Dashboard = () => {
     <ContentLayout>
       <div className='h-full border'>
         {t('dashboard.welcomeBack')}
-        <Trainers numOfCards={2} />
+        <Trainers numOfCards={3} />
       </div>
     </ContentLayout>
   );
