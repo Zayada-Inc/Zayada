@@ -1,4 +1,4 @@
-import { Card } from 'components/Card/Card';
+import { Card } from 'components/Cards/Card';
 import { useGetPersonalTrainersQuery } from 'features/api/apiSlice';
 
 export interface TrainersProps {
