@@ -145,12 +145,12 @@ namespace ZayadaAPI.Controllers
         }
 
     }
+    public class PersonalTrainerImageParams
+    {
+        public IFormFile? File { get; set; }
+        public int Height { get; set; } = 200;
+        public int Width { get; set; } = 200;
+    }
 
 }
 
-public class PersonalTrainerImageParams
-{
-    public IFormFile? File { get; set; }
-    public int Height { get; set; } = 200;
-    public int Width { get; set; } = 200;
-}

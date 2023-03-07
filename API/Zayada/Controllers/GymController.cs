@@ -20,6 +20,7 @@ namespace ZayadaAPI.Controllers
             return Ok(gyms);
         }
 
+        // to be removed
         [HttpGet("serverError")]
 
         public async Task<ActionResult<GymsToReturnDto>> GetServerError()
