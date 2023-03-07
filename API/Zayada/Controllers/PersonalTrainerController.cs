@@ -1,13 +1,13 @@
 ﻿using Application.Dtos;
 using Application.PersonalTrainers;
 using BrianMed.SmartCrop;
-using Domain.Entities;
 using Domain.Helpers;
 using Domain.Specifications.PersonalTrainers;
 using Microsoft.AspNetCore.Mvc;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using System.Net.Http.Headers;
+using ZayadaAPI.Errors;
 
 namespace ZayadaAPI.Controllers
 {
@@ -26,7 +26,7 @@ namespace ZayadaAPI.Controllers
             var trainers = await Mediator.Send(new PersonalTrainersList.Query { PersonalTrainerParams = personalTrainersParam });
             if(trainers.Data.Count == 0)
             {
-                return NotFound(404);
+                return NotFound(new ApiResponse(404));
             }
 
             return Ok(trainers);
@@ -37,7 +37,7 @@ namespace ZayadaAPI.Controllers
         {      
             if(personalTrainer == null)
             {
-                return BadRequest(400);
+                return BadRequest(new ApiResponse(400));
             }
 
             await Mediator.Send(new PersonalTrainerCreate.Command { PersonalTrainer = personalTrainer });
@@ -51,7 +51,7 @@ namespace ZayadaAPI.Controllers
            var trainer = await Mediator.Send(new PersonalTrainerById.Query { Id = id });
             if(trainer == null)
             {
-                return NotFound(404);
+                return NotFound(new ApiResponse(404));
             }
             return Ok(trainer);
         }
@@ -62,9 +62,9 @@ namespace ZayadaAPI.Controllers
             if(id >= 0)
             {
                 await Mediator.Send(new PersonalTrainerDelete.Command { Id = id });
-                return Ok(200);
+                return Ok();
             }
-            return BadRequest();
+            return BadRequest(new ApiResponse(400));
         }
        
         [HttpPost("uploadTrainerProfileImageSmartCrop")]
@@ -105,7 +105,7 @@ namespace ZayadaAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex);
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -145,12 +145,12 @@ namespace ZayadaAPI.Controllers
         }
 
     }
+    public class PersonalTrainerImageParams
+    {
+        public IFormFile? File { get; set; }
+        public int Height { get; set; } = 200;
+        public int Width { get; set; } = 200;
+    }
 
 }
 
-public class PersonalTrainerImageParams
-{
-    public IFormFile? File { get; set; }
-    public int Height { get; set; } = 200;
-    public int Width { get; set; } = 200;
-}
