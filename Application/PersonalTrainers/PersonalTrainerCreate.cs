@@ -1,7 +1,9 @@
 ﻿using Application.Dtos;
+using Application.PersonalTrainers.Validators;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
+using FluentValidation;
 using MediatR;
 
 namespace Application.PersonalTrainers
@@ -11,6 +13,14 @@ namespace Application.PersonalTrainers
         public class Command : IRequest
         {
             public PersonalTrainersToPost PersonalTrainer { get; set; }
+        }
+
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(x => x.PersonalTrainer).SetValidator(new PersonalTrainerValidator());
+            }
         }
 
         public class Handler : IRequestHandler<Command>

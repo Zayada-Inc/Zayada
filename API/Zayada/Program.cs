@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using ZayadaAPI.Errors;
 using ZayadaAPI.Extensions;
+using ZayadaAPI.MiddleWare;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +18,23 @@ builder.Services.AddDbContext<DataContext>(opt =>
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"),
     b => b.MigrationsAssembly(nameof(Persistence))
         ));
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = actionContext =>
+    {
+        var errors = actionContext.ModelState
+            .Where(e => e.Value.Errors.Count > 0)
+            .SelectMany(x => x.Value.Errors)
+            .Select(x => x.ErrorMessage).ToArray();
+
+        var errorResponse = new ApiValidationErrorResponse
+        {
+            Errors = errors
+        };
+
+        return new BadRequestObjectResult(errorResponse);
+    };
+});
 builder.Services.AddCors(opt =>
 {
     opt.AddPolicy("CorsPolicy", policy =>
@@ -25,7 +45,8 @@ builder.Services.AddCors(opt =>
 });
 
 var app = builder.Build();
-
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseStatusCodePagesWithReExecute("/errors/{0}");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
