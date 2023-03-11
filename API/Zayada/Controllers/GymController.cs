@@ -1,6 +1,7 @@
 ﻿using Application.Gyms;
 using Microsoft.AspNetCore.Mvc;
 using Application.Dtos;
+using ZayadaAPI.Errors;
 
 namespace ZayadaAPI.Controllers
 {
@@ -13,10 +14,21 @@ namespace ZayadaAPI.Controllers
             var gyms = await Mediator.Send(new GymsList.Query());
             if (gyms.Count == 0)
             {
-                return NotFound(404);
+                return NotFound(new ApiResponse(404));
             }
 
             return Ok(gyms);
+        }
+
+        // to be removed
+        [HttpGet("serverError")]
+
+        public async Task<ActionResult<GymsToReturnDto>> GetServerError()
+        {
+            var gym = await Mediator.Send(new GymById.Query { Id = 345 });
+            var exception = gym.ToString();
+
+            return Ok();
         }
 
         [HttpGet("{id}")]
@@ -25,7 +37,7 @@ namespace ZayadaAPI.Controllers
             var gym = await Mediator.Send(new GymById.Query { Id = id });
             if (gym == null)
             {
-                return NotFound(404);
+                return NotFound(new ApiResponse(404));
             }
 
             return Ok(gym);
@@ -36,10 +48,10 @@ namespace ZayadaAPI.Controllers
         {
             if (string.IsNullOrEmpty(gym.GymName))
             {
-                return BadRequest(400);
+                return BadRequest(new ApiResponse(400));
             }
             await Mediator.Send(new GymCreate.Command { Gym = gym });
-            return Ok();
+            return Ok(Task.CompletedTask);
         }
     }
 }

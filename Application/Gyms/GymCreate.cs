@@ -2,7 +2,9 @@
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
+using FluentValidation;
 using MediatR;
+using Application.Gyms.GymValidator;
 
 namespace Application.Gyms
 {
@@ -12,6 +14,13 @@ namespace Application.Gyms
         {
            public GymsToPostDto Gym { get; set; }
 
+        }
+        
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator() {
+                RuleFor(x => x.Gym).SetValidator(new Validator());
+            }
         }
         public class Handler : IRequestHandler<Command>
         {

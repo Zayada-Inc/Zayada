@@ -1,5 +1,21 @@
 {
     "dashboard": {
-        "welcomeBack": "Bine ai revenit"
+        "welcomeBack": "Bine ai revenit ",
+        "membership": {
+            "type": "Tip abonament:",
+            "title": "Abonamentul tau la @{{gymName}}",
+            "start": "Data incepere:",
+            "end": "Data finalizare:"
+        }
+    },
+    "button": {
+        "viewProfile": "Profil"
+    },
+    "modal": {
+        "settings": {
+            "title": "Setari",
+            "description": "Modifica setarile aplicatiei in functie de preferintele tale",
+            "language": "Limba:"
+        }
     }
 }

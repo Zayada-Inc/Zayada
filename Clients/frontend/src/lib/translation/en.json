@@ -1,5 +1,21 @@
 {
     "dashboard": {
-        "welcomeBack": "Welcome back"
+        "welcomeBack": "Welcome back ",
+        "membership": {
+            "type": "Subscribtion type:",
+            "title": "Your membership @{{gymName}}",
+            "start": "Start date:",
+            "end": "End date:"
+        }
+    },
+    "button": {
+        "viewProfile": "View Profile"
+    },
+    "modal": {
+        "settings": {
+            "title": "Settings",
+            "description": "Change application settings to your desired liking",
+            "language": "Language:"
+        }
     }
 }
