@@ -1,5 +1,6 @@
 ﻿using Domain.Entities.IdentityEntities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using System.Net;
@@ -24,7 +25,9 @@ namespace ZayadaAPI.Extensions
                     opt.Password.RequireDigit = false;
                     opt.Password.RequiredLength = 4;
                 }
-                ).AddEntityFrameworkStores<DataContext>();
+                )
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<DataContext>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
@@ -48,6 +51,16 @@ namespace ZayadaAPI.Extensions
 
                             return context.Response.WriteAsync(json);
                         },
+                        OnForbidden = context =>
+                        {    
+                            context.Response.ContentType = "application/json";
+                            context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                            var response = new ApiResponse((int)HttpStatusCode.Forbidden);
+                            var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+                            var json = JsonSerializer.Serialize(response, options);
+
+                            return context.Response.WriteAsync(json);
+                        }
                     };
                 });
             services.AddScoped<TokenService>();

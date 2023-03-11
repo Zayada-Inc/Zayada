@@ -1,6 +1,7 @@
 ﻿using Application.Dtos;
 using Application.PersonalTrainers;
 using BrianMed.SmartCrop;
+using Domain.Entities.IdentityEntities;
 using Domain.Helpers;
 using Domain.Specifications.PersonalTrainers;
 using Microsoft.AspNetCore.Authorization;
@@ -32,7 +33,8 @@ namespace ZayadaAPI.Controllers
 
             return Ok(trainers);
         }
-        
+
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpPost]
         public async Task<ActionResult<PersonalTrainersToPost>> AddTrainer([FromQuery] PersonalTrainersToPost personalTrainer)
         {      
@@ -46,6 +48,7 @@ namespace ZayadaAPI.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("{id}")]
         public async Task<ActionResult<PersonalTrainersToReturnDto>> GetTrainerById(int id)
         {
@@ -57,6 +60,7 @@ namespace ZayadaAPI.Controllers
             return Ok(trainer);
         }
 
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteTrainer(int id)
         {

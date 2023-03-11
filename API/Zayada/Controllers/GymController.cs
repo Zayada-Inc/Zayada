@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Application.Dtos;
 using ZayadaAPI.Errors;
 using Microsoft.AspNetCore.Authorization;
+using Domain.Entities.IdentityEntities;
 
 namespace ZayadaAPI.Controllers
 {
@@ -32,6 +33,7 @@ namespace ZayadaAPI.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("{id}")]
         public async Task<ActionResult<GymsToReturnDto>> GetGymById(int id)
         {
@@ -43,7 +45,7 @@ namespace ZayadaAPI.Controllers
 
             return Ok(gym);
         }
-
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpPost]
         public async Task<ActionResult<GymsToPostDto>> AddGym([FromQuery] GymsToPostDto gym)
         {
