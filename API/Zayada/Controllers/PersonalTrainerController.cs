@@ -3,6 +3,7 @@ using Application.PersonalTrainers;
 using BrianMed.SmartCrop;
 using Domain.Helpers;
 using Domain.Specifications.PersonalTrainers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;

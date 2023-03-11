@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Application.Dtos;
 using ZayadaAPI.Errors;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ZayadaAPI.Controllers
 {
