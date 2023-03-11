@@ -20,9 +20,9 @@ namespace ZayadaAPI.Extensions
                 {
                     opt.User.RequireUniqueEmail = true;
                     opt.Password.RequireNonAlphanumeric = false;
-                    opt.Password.RequireUppercase = false;
+                    opt.Password.RequireUppercase = true;
                     opt.Password.RequireLowercase = false;
-                    opt.Password.RequireDigit = false;
+                    opt.Password.RequireDigit = true;
                     opt.Password.RequiredLength = 4;
                 }
                 )
