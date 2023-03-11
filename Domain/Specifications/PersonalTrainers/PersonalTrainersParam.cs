@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Specifications.PersonalTrainers
+﻿namespace Domain.Specifications.PersonalTrainers
 {
     public class PersonalTrainersParam
     {
@@ -18,12 +12,13 @@ namespace Domain.Specifications.PersonalTrainers
         }
 
         public int? GymId { get; set; }
-        public string Sort { get; set; }
+        public string? Sort { get; set; }
         private string _search;
-        public string Search
+        public string? Search
         {
             get => _search;
             set => _search = value.ToLower();
         }
     }
+        
 }
