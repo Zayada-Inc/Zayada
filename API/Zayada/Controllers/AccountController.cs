@@ -96,6 +96,14 @@ namespace ZayadaAPI.Controllers
                 Bio = "",
                 UserName = model.Username
             };
+            foreach (IPasswordValidator<AppUser> validator in _userManager.PasswordValidators)
+            {
+                IdentityResult res = await validator.ValidateAsync(_userManager, user, model.Password);
+                if (!res.Succeeded)
+                {
+                    return BadRequest(new ApiResponse(400, res.Errors.FirstOrDefault().Description));
+                }
+            }
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
                 return BadRequest("Fail");
@@ -113,6 +121,7 @@ namespace ZayadaAPI.Controllers
             {
                 await _userManager.AddToRoleAsync(user, UserRoles.User);
             }
+
                 return Ok("succes");
             
         }
