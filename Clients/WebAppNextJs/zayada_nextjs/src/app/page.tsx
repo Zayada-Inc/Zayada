@@ -85,11 +85,11 @@ export default function Home() {
         </nav>
         <div className="container mx-auto">
           <div className="flex flex-col items-center justify-center min-h-screen py-2">
-          <h1 className="text-4xl font-bold text-gray-800 dark:text-white text-center border-spacing-1 ">
-            Hello DuDu! :)
-          </h1>
+            <h1 className="text-4xl font-bold text-gray-800 dark:text-white text-center border-spacing-1 ">
+              Hello DuDu! :)
+            </h1>
           </div>
-          </div>
+        </div>
       </main>
     </main>
   );
