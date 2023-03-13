@@ -10,9 +10,11 @@ namespace ZayadaAPI.Services
     public class TokenService
     {
         private readonly UserManager<AppUser> _userManager;
-        public TokenService(UserManager<AppUser> userManager)
+        private readonly IConfiguration _config;
+        public TokenService(UserManager<AppUser> userManager,IConfiguration config)
         {
             _userManager = userManager;
+            _config = config;
         }
         
         public async Task<string>  CreateToken(AppUser user)
@@ -30,7 +32,7 @@ namespace ZayadaAPI.Services
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
             
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("aaaaaaaaaaaagbf455445="));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var tokenDescriptor = new SecurityTokenDescriptor

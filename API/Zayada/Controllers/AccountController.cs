@@ -35,21 +35,29 @@ namespace ZayadaAPI.Controllers
                 UserName = registerDto.Username
             };
 
-           
+            string errors = string.Empty;
+
             var result = await _userManager.CreateAsync(user, registerDto.Password);
-            await _userManager.AddToRoleAsync(user, UserRoles.User);
+            
             if (result.Succeeded)
             {
-                return Ok(new UserDto
-                {
-                    DisplayName = user.DisplayName,
-                    Image = null,
-                    Token = await _tokenService.CreateToken(user),
-                    Username = user.UserName
-                });
-            }
+                var resultRole = await _userManager.AddToRoleAsync(user, UserRoles.User);
 
-            return BadRequest(new ApiResponse(401,result.Errors.FirstOrDefault().Description));
+                if (resultRole.Succeeded)
+                {
+                    return Ok(new UserDto
+                    {
+                        DisplayName = user.DisplayName,
+                        Image = null,
+                        Token = await _tokenService.CreateToken(user),
+                        Username = user.UserName
+                    });
+                }
+                errors = resultRole.Errors.FirstOrDefault().Description;
+            }
+            errors = errors + result.Errors.FirstOrDefault().Description;
+
+            return BadRequest(new ApiResponse(401,errors));
         }
 
         [HttpPost("login")]
