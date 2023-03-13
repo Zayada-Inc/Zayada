@@ -25,7 +25,7 @@ namespace ZayadaAPI.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<UserDto>> Register([FromQuery] RegisterDto registerDto)
+        public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registerDto)
         {
             var user = new AppUser
             {
@@ -53,7 +53,7 @@ namespace ZayadaAPI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<UserDto>> Login([FromQuery] LoginDto loginDto)
+        public async Task<ActionResult<UserDto>> Login([FromBody] LoginDto loginDto)
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
             if (user == null)
@@ -71,7 +71,7 @@ namespace ZayadaAPI.Controllers
         }
 
         [HttpPost("registerAdmin")]
-        public async Task<ActionResult<UserDto>> RegisterAdmin([FromQuery] RegisterDto model)
+        public async Task<ActionResult<UserDto>> RegisterAdmin([FromBody] RegisterDto model)
         {
             var userExists = await _userManager.FindByEmailAsync(model.Email);
             int count =  _userManager.Users.Count();
