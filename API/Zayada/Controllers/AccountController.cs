@@ -27,11 +27,6 @@ namespace ZayadaAPI.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register([FromQuery] RegisterDto registerDto)
         {
-            if (await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
-            {
-                return BadRequest(new ApiResponse(401,"Email taken"));
-            }
-
             var user = new AppUser
             {
                 DisplayName = registerDto.DisplayName,
@@ -53,16 +48,7 @@ namespace ZayadaAPI.Controllers
                     Username = user.UserName
                 });
             }
-           /*
-            foreach (IPasswordValidator<AppUser> validator in _userManager.PasswordValidators)
-            {
-                IdentityResult res = await validator.ValidateAsync(_userManager, user, registerDto.Password);
-                if (!res.Succeeded)
-                {
-                    return BadRequest(new ApiResponse(401, res.Errors.FirstOrDefault().Description));
-                }
-            }
-           */
+
             return BadRequest(new ApiResponse(401,result.Errors.FirstOrDefault().Description));
         }
 
