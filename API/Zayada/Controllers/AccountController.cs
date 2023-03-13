@@ -29,7 +29,7 @@ namespace ZayadaAPI.Controllers
         {
             if (await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
             {
-                return BadRequest("Email taken");
+                return BadRequest(new ApiResponse(401,"Email taken"));
             }
 
             var user = new AppUser
@@ -40,14 +40,7 @@ namespace ZayadaAPI.Controllers
                 UserName = registerDto.Username
             };
 
-            foreach (IPasswordValidator<AppUser> validator in _userManager.PasswordValidators)
-            {
-                IdentityResult res = await validator.ValidateAsync(_userManager, user, registerDto.Password);
-                if (!res.Succeeded)
-                {
-                    return BadRequest(new ApiResponse(400, res.Errors.FirstOrDefault().Description));
-                }
-            }
+           
             var result = await _userManager.CreateAsync(user, registerDto.Password);
             await _userManager.AddToRoleAsync(user, UserRoles.User);
             if (result.Succeeded)
@@ -60,7 +53,17 @@ namespace ZayadaAPI.Controllers
                     Username = user.UserName
                 });
             }
-            return Unauthorized(new ApiResponse(401));
+           /*
+            foreach (IPasswordValidator<AppUser> validator in _userManager.PasswordValidators)
+            {
+                IdentityResult res = await validator.ValidateAsync(_userManager, user, registerDto.Password);
+                if (!res.Succeeded)
+                {
+                    return BadRequest(new ApiResponse(401, res.Errors.FirstOrDefault().Description));
+                }
+            }
+           */
+            return BadRequest(new ApiResponse(401,result.Errors.FirstOrDefault().Description));
         }
 
         [HttpPost("login")]
