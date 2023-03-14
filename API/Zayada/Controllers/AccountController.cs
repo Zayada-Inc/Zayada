@@ -25,13 +25,8 @@ namespace ZayadaAPI.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<UserDto>> Register([FromQuery] RegisterDto registerDto)
+        public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registerDto)
         {
-            if (await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
-            {
-                return BadRequest("Email taken");
-            }
-
             var user = new AppUser
             {
                 DisplayName = registerDto.DisplayName,
@@ -40,31 +35,33 @@ namespace ZayadaAPI.Controllers
                 UserName = registerDto.Username
             };
 
-            foreach (IPasswordValidator<AppUser> validator in _userManager.PasswordValidators)
-            {
-                IdentityResult res = await validator.ValidateAsync(_userManager, user, registerDto.Password);
-                if (!res.Succeeded)
-                {
-                    return BadRequest(new ApiResponse(400, res.Errors.FirstOrDefault().Description));
-                }
-            }
+            string errors = string.Empty;
+
             var result = await _userManager.CreateAsync(user, registerDto.Password);
-            await _userManager.AddToRoleAsync(user, UserRoles.User);
+            
             if (result.Succeeded)
             {
-                return Ok(new UserDto
+                var resultRole = await _userManager.AddToRoleAsync(user, UserRoles.User);
+
+                if (resultRole.Succeeded)
                 {
-                    DisplayName = user.DisplayName,
-                    Image = null,
-                    Token = await _tokenService.CreateToken(user),
-                    Username = user.UserName
-                });
+                    return Ok(new UserDto
+                    {
+                        DisplayName = user.DisplayName,
+                        Image = null,
+                        Token = await _tokenService.CreateToken(user),
+                        Username = user.UserName
+                    });
+                }
+                errors = resultRole.Errors.FirstOrDefault().Description;
             }
-            return Unauthorized(new ApiResponse(401));
+            errors = errors + result.Errors.FirstOrDefault().Description;
+
+            return BadRequest(new ApiResponse(401,errors));
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<UserDto>> Login([FromQuery] LoginDto loginDto)
+        public async Task<ActionResult<UserDto>> Login([FromBody] LoginDto loginDto)
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
             if (user == null)
@@ -82,7 +79,7 @@ namespace ZayadaAPI.Controllers
         }
 
         [HttpPost("registerAdmin")]
-        public async Task<ActionResult<UserDto>> RegisterAdmin([FromQuery] RegisterDto model)
+        public async Task<ActionResult<UserDto>> RegisterAdmin([FromBody] RegisterDto model)
         {
             var userExists = await _userManager.FindByEmailAsync(model.Email);
             int count =  _userManager.Users.Count();
@@ -96,6 +93,14 @@ namespace ZayadaAPI.Controllers
                 Bio = "",
                 UserName = model.Username
             };
+            foreach (IPasswordValidator<AppUser> validator in _userManager.PasswordValidators)
+            {
+                IdentityResult res = await validator.ValidateAsync(_userManager, user, model.Password);
+                if (!res.Succeeded)
+                {
+                    return BadRequest(new ApiResponse(400, res.Errors.FirstOrDefault().Description));
+                }
+            }
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
                 return BadRequest("Fail");
@@ -113,6 +118,7 @@ namespace ZayadaAPI.Controllers
             {
                 await _userManager.AddToRoleAsync(user, UserRoles.User);
             }
+
                 return Ok("succes");
             
         }
