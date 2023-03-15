@@ -16,7 +16,7 @@ namespace Application.Dtos
         {
             RuleFor(x => x.DisplayName).NotEmpty();
             RuleFor(x => x.Email).NotEmpty().EmailAddress();
-            RuleFor(x => x.Password).NotEmpty().MinimumLength(5);
+            RuleFor(x => x.Password).NotEmpty();
             RuleFor(x => x.Username).NotEmpty();
         }
     }

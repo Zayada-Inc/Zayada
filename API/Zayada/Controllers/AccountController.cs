@@ -3,9 +3,9 @@ using Domain.Entities.IdentityEntities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ZayadaAPI.Errors;
 using ZayadaAPI.Services;
+using IdentityError = ZayadaAPI.Errors.IdentityError;
 
 namespace ZayadaAPI.Controllers
 {
@@ -35,8 +35,6 @@ namespace ZayadaAPI.Controllers
                 UserName = registerDto.Username
             };
 
-            string errors = string.Empty;
-
             var result = await _userManager.CreateAsync(user, registerDto.Password);
             
             if (result.Succeeded)
@@ -50,14 +48,15 @@ namespace ZayadaAPI.Controllers
                         DisplayName = user.DisplayName,
                         Image = null,
                         Token = await _tokenService.CreateToken(user),
-                        Username = user.UserName
+                        Username = user.UserName,
+                        // PersonalTrainer = null
+
                     });
                 }
-                errors = resultRole.Errors.FirstOrDefault().Description;
             }
-            errors = errors + result.Errors.FirstOrDefault().Description;
+           
 
-            return BadRequest(new ApiResponse(401,errors));
+            return BadRequest(IdentityError.Response(result));
         }
 
         [HttpPost("login")]
@@ -84,7 +83,7 @@ namespace ZayadaAPI.Controllers
             var userExists = await _userManager.FindByEmailAsync(model.Email);
             int count =  _userManager.Users.Count();
             if (userExists != null || count > 0)
-                return BadRequest("User exists");
+                return BadRequest(new ApiValidationErrorResponse { Errors = new List<string> { "User Exists! "} });
 
             AppUser user = new()
             {
@@ -93,17 +92,10 @@ namespace ZayadaAPI.Controllers
                 Bio = "",
                 UserName = model.Username
             };
-            foreach (IPasswordValidator<AppUser> validator in _userManager.PasswordValidators)
-            {
-                IdentityResult res = await validator.ValidateAsync(_userManager, user, model.Password);
-                if (!res.Succeeded)
-                {
-                    return BadRequest(new ApiResponse(400, res.Errors.FirstOrDefault().Description));
-                }
-            }
+
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
-                return BadRequest("Fail");
+                return BadRequest(IdentityError.Response(result));
 
             if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
                 await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
@@ -114,12 +106,13 @@ namespace ZayadaAPI.Controllers
             {
                 await _userManager.AddToRoleAsync(user, UserRoles.Admin);
             }
+
             if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
             {
                 await _userManager.AddToRoleAsync(user, UserRoles.User);
             }
 
-                return Ok("succes");
+                return Ok(result);
             
         }
     }
