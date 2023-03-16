@@ -135,9 +135,16 @@ namespace Persistence.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("GymId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("PersonalTrainers");
                 });
@@ -276,7 +283,15 @@ namespace Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("GymId");
 
+                    b.HasOne("Domain.Entities.IdentityEntities.AppUser", "User")
+                        .WithOne("PersonalTrainer")
+                        .HasForeignKey("Domain.Entities.PersonalTrainer", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Gym");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -327,6 +342,12 @@ namespace Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.IdentityEntities.AppUser", b =>
+                {
+                    b.Navigation("PersonalTrainer")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

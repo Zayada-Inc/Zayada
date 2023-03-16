@@ -1,8 +1,12 @@
 ﻿using Application.Dtos;
+using Application.PersonalTrainers;
+using Domain.Entities;
 using Domain.Entities.IdentityEntities;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ZayadaAPI.Errors;
 using ZayadaAPI.Services;
 using IdentityError = ZayadaAPI.Errors.IdentityError;
@@ -36,7 +40,7 @@ namespace ZayadaAPI.Controllers
             };
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
-            
+
             if (result.Succeeded)
             {
                 var resultRole = await _userManager.AddToRoleAsync(user, UserRoles.User);
@@ -54,7 +58,7 @@ namespace ZayadaAPI.Controllers
                     });
                 }
             }
-           
+
 
             return BadRequest(IdentityError.Response(result));
         }
@@ -81,9 +85,9 @@ namespace ZayadaAPI.Controllers
         public async Task<ActionResult<UserDto>> RegisterAdmin([FromBody] RegisterDto model)
         {
             var userExists = await _userManager.FindByEmailAsync(model.Email);
-            int count =  _userManager.Users.Count();
+            int count = _userManager.Users.Count();
             if (userExists != null || count > 0)
-                return BadRequest(new ApiValidationErrorResponse { Errors = new List<string> { "User Exists! "} });
+                return BadRequest(new ApiValidationErrorResponse { Errors = new List<string> { "User Exists! " } });
 
             AppUser user = new()
             {
@@ -112,8 +116,36 @@ namespace ZayadaAPI.Controllers
                 await _userManager.AddToRoleAsync(user, UserRoles.User);
             }
 
-                return Ok(result);
-            
+            return Ok(result);
+
         }
+
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpGet("getAllUsers")]
+        public async Task<ActionResult<List<UserReturnDto>>> GetAllUsers()
+        {
+            var users = await _userManager.Users.ToListAsync();
+           
+            var mappedUsers = users.Select(async user => new UserReturnDto
+            {
+                Id = user.Id,
+                DisplayName = user.DisplayName,
+                Username = user.UserName,
+                Image = null,
+                PersonalTrainer = await Mediator.Send(new PersonalTrainerById.Query { IdString = user.Id })
+            }).ToList();
+
+
+            return Ok(mappedUsers);
+        }
+
+        public class UserReturnDto
+            {
+                public string Id { get; set; }
+                public string DisplayName { get; set; }
+                public string Username { get; set; }
+                public string Image { get; set; }
+                public PersonalTrainer PersonalTrainer { get; set; }
+            }
     }
 }
