@@ -24,7 +24,7 @@
     "camelcase": "error",
     "spaced-comment": "error",
     "no-duplicate-imports": "error",
-    "prettier/prettier": ["error", { "semi": true }]
+    "prettier/prettier": ["error", { "semi": true, "useTabs": false }]
   },
   "settings": {
     "import/resolver": {

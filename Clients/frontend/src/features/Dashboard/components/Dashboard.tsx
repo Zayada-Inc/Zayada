@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 
 import { ContentLayout } from 'components/Layout';
-import { Trainers } from './Trainers';
 import { Membership } from 'components/Cards';
 import { Accordion } from 'components/Headless';
+import { Trainers } from 'features/Dashboard';
 
 export const Dashboard = () => {
   const { t } = useTranslation();
