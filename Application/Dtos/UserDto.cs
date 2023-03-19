@@ -9,7 +9,5 @@ namespace Application.Dtos
         public string Username { get; set; }
         public string Image { get; set; }
 
-      //  public PersonalTrainer PersonalTrainer { get; set; }
-
     }
 }

@@ -50,9 +50,9 @@ namespace ZayadaAPI.Controllers
 
         [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<PersonalTrainersToReturnDto>> GetTrainerById(int id)
+        public async Task<ActionResult<PersonalTrainersToReturnDto>> GetTrainerById(string id)
         {
-           var trainer = await Mediator.Send(new PersonalTrainerById.Query { Id = id });
+           var trainer = await Mediator.Send(new PersonalTrainerById.Query { IdString = id });
             if(trainer == null)
             {
                 return NotFound(new ApiResponse(404));

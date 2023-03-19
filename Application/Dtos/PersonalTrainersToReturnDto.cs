@@ -1,4 +1,6 @@
-﻿namespace Application.Dtos
+﻿using Domain.Entities.IdentityEntities;
+
+namespace Application.Dtos
 {
     public class PersonalTrainersToReturnDto
     {
@@ -10,5 +12,6 @@
         public string? ImageUrl { get; set; }
         public string? Certifications { get; set; }
         public string? GymName { get; set; }
+        public string Username { get; set; }
     }
 }
