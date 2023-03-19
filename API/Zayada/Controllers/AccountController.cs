@@ -21,11 +21,13 @@ namespace ZayadaAPI.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly TokenService _tokenService;
         private readonly RoleManager<IdentityRole> _roleManager;
-        public AccountController(UserManager<AppUser> userManager, TokenService tokenService, RoleManager<IdentityRole> roleManager)
+        private readonly IMediator _mediator;
+        public AccountController(UserManager<AppUser> userManager, TokenService tokenService, RoleManager<IdentityRole> roleManager, IMediator mediator)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _roleManager = roleManager;
+            _mediator = mediator;
         }
 
         [HttpPost("register")]
@@ -68,7 +70,7 @@ namespace ZayadaAPI.Controllers
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
             if (user == null)
-                return Unauthorized(new ApiResponse(401));
+                return Unauthorized(new ApiValidationErrorResponse { Errors = new List<string> { "Wrong email or password! " } });
             var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
             if (result)
                 return new UserDto
@@ -78,7 +80,7 @@ namespace ZayadaAPI.Controllers
                     Token = await _tokenService.CreateToken(user),
                     Image = null
                 };
-            return Unauthorized(new ApiResponse(401));
+            return Unauthorized(new ApiValidationErrorResponse { Errors = new List<string> { "Wrong email or password! " } });
         }
 
         [HttpPost("registerAdmin")]
@@ -131,21 +133,22 @@ namespace ZayadaAPI.Controllers
                 Id = user.Id,
                 DisplayName = user.DisplayName,
                 Username = user.UserName,
+                Email = user.Email,
                 Image = null,
-                PersonalTrainer = await Mediator.Send(new PersonalTrainerById.Query { IdString = user.Id })
+                PersonalTrainer = await _mediator.Send(new PersonalTrainerById.Query { IdString = user.Id })
             }).ToList();
 
-
-            return Ok(mappedUsers);
+            return Ok(mappedUsers.AsEnumerable().Select(x => x.Result).ToList());
         }
 
         public class UserReturnDto
             {
                 public string Id { get; set; }
-                public string DisplayName { get; set; }
+                public string DisplayName { get; set; } 
+                public string Email { get; set; }
                 public string Username { get; set; }
                 public string Image { get; set; }
-                public PersonalTrainer PersonalTrainer { get; set; }
+                public PersonalTrainersToReturnDto PersonalTrainer { get; set; }
             }
     }
 }

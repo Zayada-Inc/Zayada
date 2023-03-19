@@ -41,7 +41,12 @@ namespace Application.PersonalTrainers
             */
             public async Task<PersonalTrainersToReturnDto> Handle(Query request, CancellationToken cancellationToken)
             {
-                var trainer = await _dbContext.PersonalTrainers.FirstOrDefaultAsync(x => x.UserId == request.IdString);
+                var trainer = await _dbContext
+                    .PersonalTrainers
+                    .Include(x => x.Gym)
+                    .FirstOrDefaultAsync(x => x.UserId == request.IdString)
+                    
+                    ;
                 return _mapper.Map<PersonalTrainer, PersonalTrainersToReturnDto>(trainer);
 
             }

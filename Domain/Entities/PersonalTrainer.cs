@@ -1,6 +1,4 @@
 ﻿using Domain.Entities.IdentityEntities;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
