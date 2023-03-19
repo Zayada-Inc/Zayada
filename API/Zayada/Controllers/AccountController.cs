@@ -14,7 +14,6 @@ using IdentityError = ZayadaAPI.Errors.IdentityError;
 namespace ZayadaAPI.Controllers
 {
     [ApiController]
-    [AllowAnonymous]
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
@@ -29,7 +28,7 @@ namespace ZayadaAPI.Controllers
             _roleManager = roleManager;
             _mediator = mediator;
         }
-
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registerDto)
         {
@@ -65,6 +64,7 @@ namespace ZayadaAPI.Controllers
             return BadRequest(IdentityError.Response(result));
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login([FromBody] LoginDto loginDto)
         {
@@ -83,6 +83,7 @@ namespace ZayadaAPI.Controllers
             return Unauthorized(new ApiValidationErrorResponse { Errors = new List<string> { "Wrong email or password! " } });
         }
 
+        [AllowAnonymous]
         [HttpPost("registerAdmin")]
         public async Task<ActionResult<UserDto>> RegisterAdmin([FromBody] RegisterDto model)
         {

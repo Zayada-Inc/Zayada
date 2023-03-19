@@ -38,7 +38,7 @@ namespace ZayadaAPI.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = System.DateTime.Now.AddDays(1),
+                Expires = System.DateTime.Now.AddHours(6),
                 SigningCredentials = creds
             };
 
