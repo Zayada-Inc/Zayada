@@ -1,6 +1,6 @@
-import { FormFields } from 'components/Form';
+import { FormField } from './Form';
 
-export const REGISTRATION_FIELDS: FormFields = [
+export const REGISTRATION_FIELDS: FormField[] = [
   {
     name: 'Username',
     placeholder: 'Username',
@@ -12,23 +12,18 @@ export const REGISTRATION_FIELDS: FormFields = [
     type: 'email',
   },
   {
-    name: 'Password',
-    placeholder: 'Password',
-    type: 'text',
-  },
-  {
     name: 'DisplayName',
     placeholder: 'DisplayName',
     type: 'text',
   },
-];
-
-export const LOGIN_FIELDS: FormFields = [
   {
-    name: 'Username',
-    placeholder: 'Username',
+    name: 'Password',
+    placeholder: 'Password',
     type: 'text',
   },
+];
+
+export const LOGIN_FIELDS: FormField[] = [
   {
     name: 'Email',
     placeholder: 'Email',

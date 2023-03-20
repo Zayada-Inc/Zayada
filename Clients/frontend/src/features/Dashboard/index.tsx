@@ -1,2 +1,1 @@
-export * from './components/Dashboard';
-export * from './components/Trainers';
+export * from './routes/Dashboard';
