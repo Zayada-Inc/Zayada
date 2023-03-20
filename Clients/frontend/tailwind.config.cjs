@@ -9,6 +9,9 @@ module.exports = {
         'dark-color': '#1E1E1E',
         'primary-btn': '#EB600F',
       },
+      backgroundImage: {
+        'brand-pattern': "url('brand_pattern2.svg')",
+      },
     },
   },
   plugins: [],

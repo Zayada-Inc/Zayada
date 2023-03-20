@@ -1,4 +1,19 @@
-{
+{   
+    "zayada": "Zayada",
+    "register": {
+        "signUp": "Inregistreaza-ti un cont nou",
+        "message": {
+            "existingAccount": "Aveti deja un cont?",
+            "redirect": "Click aici pentru login"
+        }
+    },
+    "login": {
+        "signIn": "Logheaza-te in cont",
+        "message": {
+            "noAccount": "Nu aveti deja un cont?",
+            "redirect": "Click aici pentru a va inregistra"
+        }
+    },
     "dashboard": {
         "welcomeBack": "Bine ai revenit ",
         "membership": {

@@ -1,4 +1,19 @@
 {
+    "zayada": "Zayada",
+    "register": {
+        "signUp": "Sign up for a new account",
+        "message": {
+            "existingAccount": "Already have an account?",
+            "redirect": "Click here to login"
+        }
+    },
+    "login": {
+        "signIn": "Sign in to your account",
+        "message": {
+            "noAccount": "Don't have an account yet?",
+            "redirect": "Click here to sign up"
+        }
+    },
     "dashboard": {
         "welcomeBack": "Welcome back ",
         "membership": {
