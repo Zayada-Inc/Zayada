@@ -20,7 +20,7 @@ jobs:
         dotnet-version: '7.0.x'
 
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore Zayada/API/Zayada/Zayada.sln
 
     - name: Build
       run: dotnet build Zayada/API/Zayada/Zayada.sln --configuration Release --no-restore
