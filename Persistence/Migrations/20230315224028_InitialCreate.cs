@@ -184,11 +184,18 @@ namespace Persistence.Migrations
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     ImageUrl = table.Column<string>(type: "TEXT", nullable: true),
                     Certifications = table.Column<string>(type: "TEXT", nullable: true),
-                    GymId = table.Column<int>(type: "INTEGER", nullable: true)
+                    GymId = table.Column<int>(type: "INTEGER", nullable: true),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PersonalTrainers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PersonalTrainers_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_PersonalTrainers_Gyms_GymId",
                         column: x => x.GymId,
@@ -237,6 +244,12 @@ namespace Persistence.Migrations
                 name: "IX_PersonalTrainers_GymId",
                 table: "PersonalTrainers",
                 column: "GymId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PersonalTrainers_UserId",
+                table: "PersonalTrainers",
+                column: "UserId",
+                unique: true);
         }
 
         /// <inheritdoc />

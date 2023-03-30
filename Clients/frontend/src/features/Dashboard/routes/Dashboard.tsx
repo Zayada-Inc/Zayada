@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ContentLayout } from 'components/Layout';
 import { Membership } from 'components/Cards';
 import { Accordion } from 'components/Headless';
-import { Trainers } from 'features/Dashboard';
+import { Trainers } from 'features/Dashboard/components/Trainers';
 
 export const Dashboard = () => {
   const { t } = useTranslation();

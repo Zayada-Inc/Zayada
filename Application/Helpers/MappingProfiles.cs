@@ -10,6 +10,7 @@ namespace Application.Helpers
         {
             CreateMap<PersonalTrainer, PersonalTrainersToReturnDto>()
             .ForMember(d => d.GymName, o => o.MapFrom(s => s.Gym.GymName))
+            .ForMember(d => d.Username, o => o.MapFrom(s => s.User.UserName))
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id));
 
             CreateMap<PersonalTrainersToPost, PersonalTrainer>()
@@ -18,8 +19,7 @@ namespace Application.Helpers
             CreateMap<Gym, GymsToReturnDto>()
                 .ForMember(d => d.Id, o => o.MapFrom(s => s.Id));
             CreateMap<GymsToPostDto, Gym>()
-                .ForMember(d => d.Id, o => o.Ignore());
-                
+                .ForMember(d => d.Id, o => o.Ignore());   
         }
     }
 }

@@ -11,10 +11,12 @@ namespace Domain.Specifications.PersonalTrainers
     {
         public PersonalTrainersSpecification() { 
         AddInclude(x => x.Gym);
+        AddInclude(x => x.User);
         }
         public PersonalTrainersSpecification(int id): base(x => x.Id == id)
         {
             AddInclude(x => x.Gym);
+            AddInclude(x => x.User);
         }
 
         public PersonalTrainersSpecification(PersonalTrainersParam personalTrainersParam): base(x =>
@@ -23,6 +25,7 @@ namespace Domain.Specifications.PersonalTrainers
                               )
         {
             AddInclude(x => x.Gym);
+            AddInclude(x => x.User);
             ApplyPaging(personalTrainersParam.PageSize * (personalTrainersParam.PageIndex - 1), personalTrainersParam.PageSize);
             AddOrderBy(n => n.Name.ToLower());
             if (!string.IsNullOrEmpty(personalTrainersParam.Sort))

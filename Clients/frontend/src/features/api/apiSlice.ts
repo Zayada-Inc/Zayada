@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { IAuthenticationResponse, ILoginRequest, IRegisterRequest } from './types';
 
 // TO-DO: change baseQuery to env variable
 export const apiSlice = createApi({
@@ -17,14 +18,21 @@ export const apiSlice = createApi({
     getPersonalTrainers: builder.query<any, void>({
       query: () => '/PersonalTrainer',
     }),
-    register: builder.mutation<any, any>({
+    register: builder.mutation<IAuthenticationResponse, IRegisterRequest>({
       query: (newUser) => ({
         url: `/Account/register`,
         method: 'POST',
         body: newUser,
       }),
     }),
+    login: builder.mutation<IAuthenticationResponse, ILoginRequest>({
+      query: (credentials) => ({
+        url: '/Account/login',
+        method: 'POST',
+        body: credentials,
+      }),
+    }),
   }),
 });
 
-export const { useGetPersonalTrainersQuery, useRegisterMutation } = apiSlice;
+export const { useGetPersonalTrainersQuery, useRegisterMutation, useLoginMutation } = apiSlice;

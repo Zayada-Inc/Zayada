@@ -1,29 +1,49 @@
+import { FC } from 'react';
 import { useForm } from 'react-hook-form';
-import { Input } from './Input';
+import { yupResolver } from '@hookform/resolvers/yup';
 
-export type FormFields = {
-  [key: string]: string;
-  type: 'text' | 'email' | 'password';
-}[];
+import { Input } from 'components/Form';
+import { IAPIError } from 'types';
+
+export type FormField = {
+  name: string;
+  placeholder: string;
+  type: 'text' | 'email' | 'password' | 'number';
+};
 
 interface FormProps {
-  fields: FormFields;
-  onSubmit: (data: { [key: string]: string }) => void;
+  fields: FormField[];
+  onSubmit: (data: any) => void;
+  schema: any;
+  apiValidationError: IAPIError | undefined;
+  message?: JSX.Element;
 }
 
-export const Form = ({ fields, onSubmit }: FormProps) => {
-  const { register, handleSubmit } = useForm();
+export const Form: FC<FormProps> = ({ fields, onSubmit, schema, message, apiValidationError }) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(schema) });
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className='flex flex-col items-center border-2 border-green-500 gap-4'
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
       {fields.map((field, i: number) => (
-        <Input key={i} name={field.name} label={field.name} type={field.type} {...{ register }} />
+        <Input
+          key={i}
+          name={field.name}
+          label={field.name}
+          type={field.type}
+          error={errors[field.name]}
+          {...{ register, apiValidationError }}
+        />
       ))}
+      {message && <p>{message}</p>}
+      {apiValidationError && (
+        <p className='text-red-500 text-sm'>{apiValidationError.data.message}</p>
+      )}
       {/* TO-DO: replace with btn component */}
-      <input type='submit' className='w-3/5 bg-blue-600 text-white p-1' />
+      <input type='submit' className='bg-blue-600 text-white py-2 mt-20 rounded-md' />
     </form>
   );
 };
