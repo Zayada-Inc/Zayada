@@ -23,7 +23,7 @@ jobs:
       run: dotnet restore
 
     - name: Build
-      run: dotnet build API/Zayada/Zayada.sln --configuration Release --no-restore
+      run: dotnet build Zayada/API/Zayada/Zayada.sln --configuration Release --no-restore
 
   #  - name: Test
   #   run: dotnet test --no-restore --verbosity normal
