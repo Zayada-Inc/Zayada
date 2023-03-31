@@ -13,5 +13,6 @@ namespace Persistence
 
         public DbSet<PersonalTrainer> PersonalTrainers { get; set; }
         public DbSet<Gym> Gyms { get; set; }
+        public DbSet<Photo> Photos { get; set; }
     }
 }

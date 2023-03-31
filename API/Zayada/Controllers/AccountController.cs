@@ -1,5 +1,6 @@
-﻿using Application.Dtos;
-using Application.PersonalTrainers;
+﻿using Application.CommandsQueries.PersonalTrainers;
+using Application.CommandsQueries.Photos;
+using Application.Dtos;
 using Domain.Entities;
 using Domain.Entities.IdentityEntities;
 using MediatR;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Mail;
 using ZayadaAPI.Errors;
 using ZayadaAPI.Services;
 using IdentityError = ZayadaAPI.Errors.IdentityError;
@@ -17,6 +19,7 @@ namespace ZayadaAPI.Controllers
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
+        private readonly EmailService _emailService;
         private readonly UserManager<AppUser> _userManager;
         private readonly TokenService _tokenService;
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -27,6 +30,7 @@ namespace ZayadaAPI.Controllers
             _tokenService = tokenService;
             _roleManager = roleManager;
             _mediator = mediator;
+            _emailService = new EmailService();
         }
         [AllowAnonymous]
         [HttpPost("register")]
@@ -51,7 +55,7 @@ namespace ZayadaAPI.Controllers
                     return Ok(new UserDto
                     {
                         DisplayName = user.DisplayName,
-                        Image = null,
+                        Photos = null,
                         Token = await _tokenService.CreateToken(user),
                         Username = user.UserName,
                         // PersonalTrainer = null
@@ -62,6 +66,13 @@ namespace ZayadaAPI.Controllers
 
 
             return BadRequest(IdentityError.Response(result));
+        }
+        [AllowAnonymous]
+        [HttpPost("sendEmail")]
+        public async Task<IActionResult> SendEmail([FromBody] EmailRequest emailRequest)
+        {
+             await _emailService.SendEmailAsync(emailRequest.ToEmail, emailRequest.Subject, _emailService.EmailMessage(emailRequest.Message));
+            return Ok();
         }
 
         [AllowAnonymous]
@@ -78,7 +89,7 @@ namespace ZayadaAPI.Controllers
                     DisplayName = user.DisplayName,
                     Username = user.UserName,
                     Token = await _tokenService.CreateToken(user),
-                    Image = null
+                    Photos = _mediator.Send(new PhotosByUserId.Query { UserId = user.Id }).Result
                 };
             return Unauthorized(new ApiValidationErrorResponse { Errors = new List<string> { "Wrong email or password! " } });
         }
@@ -136,7 +147,8 @@ namespace ZayadaAPI.Controllers
                 Username = user.UserName,
                 Email = user.Email,
                 Image = null,
-                PersonalTrainer = await _mediator.Send(new PersonalTrainerById.Query { IdString = user.Id })
+                PersonalTrainer = await _mediator.Send(new PersonalTrainerById.Query { IdString = user.Id }),
+                Photos = await _mediator.Send(new PhotosByUserId.Query { UserId = user.Id })
             }).ToList();
 
             return Ok(mappedUsers.AsEnumerable().Select(x => x.Result).ToList());
@@ -150,6 +162,7 @@ namespace ZayadaAPI.Controllers
                 public string Username { get; set; }
                 public string Image { get; set; }
                 public PersonalTrainersToReturnDto PersonalTrainer { get; set; }
+                public IEnumerable<Photo> Photos { get; set; }
             }
     }
 }

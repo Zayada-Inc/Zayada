@@ -1,24 +1,25 @@
-﻿using Application.Dtos;
+﻿using Application.CommandsQueries.Gyms.GymValidator;
+using Application.Dtos;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
 using FluentValidation;
 using MediatR;
-using Application.Gyms.GymValidator;
 
-namespace Application.Gyms
+namespace Application.CommandsQueries.Gyms
 {
     public class GymCreate
     {
         public class Command : IRequest
         {
-           public GymsToPostDto Gym { get; set; }
+            public GymsToPostDto Gym { get; set; }
 
         }
-        
+
         public class CommandValidator : AbstractValidator<Command>
         {
-            public CommandValidator() {
+            public CommandValidator()
+            {
                 RuleFor(x => x.Gym).SetValidator(new Validator());
             }
         }
@@ -27,7 +28,7 @@ namespace Application.Gyms
             private readonly IGenericRepository<Gym> _gymRepository;
             private readonly IMapper _mapper;
 
-            public Handler(IGenericRepository<Gym> gymRepository,IMapper mapper)
+            public Handler(IGenericRepository<Gym> gymRepository, IMapper mapper)
             {
                 _gymRepository = gymRepository;
                 _mapper = mapper;

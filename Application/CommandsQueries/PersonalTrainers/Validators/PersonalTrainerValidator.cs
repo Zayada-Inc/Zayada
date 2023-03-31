@@ -2,11 +2,12 @@
 using Domain.Specifications.PersonalTrainers;
 using FluentValidation;
 
-namespace Application.PersonalTrainers.Validators
+namespace Application.CommandsQueries.PersonalTrainers.Validators
 {
     public class PersonalTrainerValidator : AbstractValidator<PersonalTrainersToPost>
     {
-        public PersonalTrainerValidator() {
+        public PersonalTrainerValidator()
+        {
             RuleFor(x => x.Name).NotEmpty();
             RuleFor(x => x.Description).NotEmpty();
             RuleFor(x => x.Email).EmailAddress().NotEmpty();

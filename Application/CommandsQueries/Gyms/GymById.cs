@@ -4,7 +4,7 @@ using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
 
-namespace Application.Gyms
+namespace Application.CommandsQueries.Gyms
 {
     public class GymById
     {
@@ -19,7 +19,7 @@ namespace Application.Gyms
             private readonly IGenericRepository<Gym> _gymRepository;
             private readonly IMapper _mapper;
 
-            public Handler(IGenericRepository<Gym> gymRepository,IMapper mapper)
+            public Handler(IGenericRepository<Gym> gymRepository, IMapper mapper)
             {
                 _gymRepository = gymRepository;
                 _mapper = mapper;

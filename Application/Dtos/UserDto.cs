@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using System.Collections.ObjectModel;
 
 namespace Application.Dtos
 {
@@ -7,7 +8,6 @@ namespace Application.Dtos
         public string DisplayName { get; set; }
         public string Token { get; set; }
         public string Username { get; set; }
-        public string Image { get; set; }
-
+        public IEnumerable<Photo> Photos { get; set; }
     }
 }
