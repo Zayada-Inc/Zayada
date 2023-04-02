@@ -1,21 +1,41 @@
 {
-  "navigationFallback": {
-    "rewrite": "index.html",
-    "exclude": [ "/images/*.{png,jpg,gif}", "/css/*", "/js/*" ]
-  },
-  "routes": [
-    {
-      "route": "/*",
-      "serve": "/index.html",
-      "statusCode": 200
+    "navigationFallback": {
+      "rewrite": "index.html",
+      "exclude": ["/images/*.{png,jpg,gif,svg}", "/css/*", "/js/*"]
     },
-    {
-      "route": "/login",
-      "redirect": "/login",
-      "statusCode": 301
+    "routes": [
+      {
+        "route": "/",
+        "serve": "/index.html",
+        "statusCode": 200
+      },
+      {
+        "route": "/register",
+        "serve": "/index.html",
+        "statusCode": 200
+      },
+      {
+        "route": "/login",
+        "serve": "/index.html",
+        "statusCode": 200
+      },
+      {
+        "route": "/unauthorized",
+        "serve": "/index.html",
+        "statusCode": 200
+      },
+      {
+        "route": "/dashboard",
+        "serve": "/index.html",
+        "statusCode": 200
+      },
+      {
+        "route": "/*",
+        "serve": "/index.html",
+        "statusCode": 404
+      }
+    ],
+    "mimeTypes": {
+      "webmanifest": "application/manifest+json"
     }
-  ],
-  "mimeTypes": {
-    "webmanifest": "application/manifest+json"
   }
-}
