@@ -10,7 +10,14 @@
         "statusCode": 200
       }
     ],
+    "responseOverrides": {
+      "404": {
+        "rewrite": "/index.html",
+        "statusCode": 200
+      }
+    },
     "mimeTypes": {
+      "js": "application/javascript",
       "webmanifest": "application/manifest+json"
     }
   }
