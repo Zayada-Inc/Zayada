@@ -10,7 +10,7 @@ module.exports = {
         'primary-btn': '#EB600F',
       },
       backgroundImage: {
-        'brand-pattern': "url('brand_pattern2.svg')",
+        'brand-pattern': "url('/src/assets/brand_pattern2.svg')",
       },
     },
   },
