@@ -5,34 +5,9 @@
     },
     "routes": [
       {
-        "route": "/",
-        "serve": "/index.html",
-        "statusCode": 200
-      },
-      {
-        "route": "/register",
-        "serve": "/index.html",
-        "statusCode": 200
-      },
-      {
-        "route": "/login",
-        "serve": "/index.html",
-        "statusCode": 200
-      },
-      {
-        "route": "/unauthorized",
-        "serve": "/index.html",
-        "statusCode": 200
-      },
-      {
-        "route": "/dashboard",
-        "serve": "/index.html",
-        "statusCode": 200
-      },
-      {
         "route": "/*",
         "serve": "/index.html",
-        "statusCode": 404
+        "statusCode": 200
       }
     ],
     "mimeTypes": {
