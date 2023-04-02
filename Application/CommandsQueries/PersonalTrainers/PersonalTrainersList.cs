@@ -6,12 +6,13 @@ using Domain.Interfaces;
 using Domain.Specifications.PersonalTrainers;
 using MediatR;
 
-namespace Application.PersonalTrainers
+namespace Application.CommandsQueries.PersonalTrainers
 {
     public class PersonalTrainersList
     {
-        public class Query : IRequest<Pagination<PersonalTrainersToReturnDto>> { 
-        public PersonalTrainersParam PersonalTrainerParams { get; set; }
+        public class Query : IRequest<Pagination<PersonalTrainersToReturnDto>>
+        {
+            public PersonalTrainersParam PersonalTrainerParams { get; set; }
 
         }
 
@@ -20,7 +21,7 @@ namespace Application.PersonalTrainers
             private readonly IGenericRepository<PersonalTrainer> _personalTrainerRepository;
             private readonly IMapper _mapper;
 
-            public Handler(IGenericRepository<PersonalTrainer> personalTrainerRepository,IMapper mapper)
+            public Handler(IGenericRepository<PersonalTrainer> personalTrainerRepository, IMapper mapper)
             {
                 _personalTrainerRepository = personalTrainerRepository;
                 _mapper = mapper;
@@ -34,7 +35,7 @@ namespace Application.PersonalTrainers
                 var trainers = await _personalTrainerRepository.ListAsync(spec);
                 var data = _mapper.Map<IReadOnlyList<PersonalTrainer>, IReadOnlyList<PersonalTrainersToReturnDto>>(trainers);
 
-                return new Pagination<PersonalTrainersToReturnDto>(request.PersonalTrainerParams.PageIndex,request.PersonalTrainerParams.PageSize,totalItems,data);
+                return new Pagination<PersonalTrainersToReturnDto>(request.PersonalTrainerParams.PageIndex, request.PersonalTrainerParams.PageSize, totalItems, data);
             }
         }
     }

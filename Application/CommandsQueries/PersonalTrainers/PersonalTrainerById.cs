@@ -7,17 +7,17 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Application.PersonalTrainers
+namespace Application.CommandsQueries.PersonalTrainers
 {
     public class PersonalTrainerById
     {
         public class Query : IRequest<PersonalTrainersToReturnDto>
         {
-         //   public int Id { get; set; }
-            public string  IdString { get; set; }
+            //   public int Id { get; set; }
+            public string IdString { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query,PersonalTrainersToReturnDto>
+        public class Handler : IRequestHandler<Query, PersonalTrainersToReturnDto>
         {
             private readonly IGenericRepository<PersonalTrainer> _personalTrainerRepository;
             private readonly IMapper _mapper;
@@ -45,13 +45,13 @@ namespace Application.PersonalTrainers
                     .PersonalTrainers
                     .Include(x => x.Gym)
                     .FirstOrDefaultAsync(x => x.UserId == request.IdString)
-                    
+
                     ;
                 return _mapper.Map<PersonalTrainer, PersonalTrainersToReturnDto>(trainer);
 
             }
 
         }
-              
+
     }
 }

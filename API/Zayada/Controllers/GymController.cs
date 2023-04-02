@@ -1,9 +1,9 @@
-﻿using Application.Gyms;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Application.Dtos;
 using ZayadaAPI.Errors;
 using Microsoft.AspNetCore.Authorization;
 using Domain.Entities.IdentityEntities;
+using Application.CommandsQueries.Gyms;
 
 namespace ZayadaAPI.Controllers
 {
@@ -21,18 +21,16 @@ namespace ZayadaAPI.Controllers
 
             return Ok(gyms);
         }
-
+        /*
         // to be removed
-        [HttpGet("serverError")]
+        [HttpGet("testKey")]
 
-        public async Task<ActionResult<GymsToReturnDto>> GetServerError()
+        public  ActionResult TestKey()
         {
-            var gym = await Mediator.Send(new GymById.Query { Id = 345 });
-            var exception = gym.ToString();
-
-            return Ok();
+            var data = Environment.GetEnvironmentVariable(EnvironmentVariables.CloudinaryKey);
+            return Ok(data);
         }
-
+        */
         [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("{id}")]
         public async Task<ActionResult<GymsToReturnDto>> GetGymById(int id)

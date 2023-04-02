@@ -1,5 +1,6 @@
-﻿using Application.Dtos;
-using Application.PersonalTrainers;
+﻿using Application.CommandsQueries.PersonalTrainers;
+using Application.CommandsQueries.Photos;
+using Application.Dtos;
 using Domain.Entities;
 using Domain.Entities.IdentityEntities;
 using MediatR;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Mail;
 using ZayadaAPI.Errors;
 using ZayadaAPI.Services;
 using IdentityError = ZayadaAPI.Errors.IdentityError;
@@ -17,6 +19,7 @@ namespace ZayadaAPI.Controllers
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
+        private readonly EmailService _emailService;
         private readonly UserManager<AppUser> _userManager;
         private readonly TokenService _tokenService;
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -27,61 +30,94 @@ namespace ZayadaAPI.Controllers
             _tokenService = tokenService;
             _roleManager = roleManager;
             _mediator = mediator;
+            _emailService = new EmailService();
         }
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registerDto)
         {
-            var user = new AppUser
+            try
             {
-                DisplayName = registerDto.DisplayName,
-                Email = registerDto.Email,
-                Bio = "",
-                UserName = registerDto.Username
-            };
-
-            var result = await _userManager.CreateAsync(user, registerDto.Password);
-
-            if (result.Succeeded)
-            {
-                var resultRole = await _userManager.AddToRoleAsync(user, UserRoles.User);
-
-                if (resultRole.Succeeded)
+                var user = new AppUser
                 {
-                    return Ok(new UserDto
-                    {
-                        DisplayName = user.DisplayName,
-                        Image = null,
-                        Token = await _tokenService.CreateToken(user),
-                        Username = user.UserName,
-                        // PersonalTrainer = null
+                    DisplayName = registerDto.DisplayName,
+                    Email = registerDto.Email,
+                    Bio = "",
+                    UserName = registerDto.Username
+                };
 
-                    });
+                var result = await _userManager.CreateAsync(user, registerDto.Password);
+
+                if (result.Succeeded)
+                {
+                    var resultRole = await _userManager.AddToRoleAsync(user, UserRoles.User);
+
+                    if (resultRole.Succeeded)
+                    {
+                        return Ok(new UserDto
+                        {
+                            DisplayName = user.DisplayName,
+                            Photos = null,
+                            Token = await _tokenService.CreateToken(user),
+                            Username = user.UserName,
+                            // PersonalTrainer = null
+
+                        });
+                    }
                 }
+                return BadRequest(IdentityError.Response(result));
             }
 
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiValidationErrorResponse { Errors = new List<string> { ex.Message } });
+            }
 
-            return BadRequest(IdentityError.Response(result));
+            
+        }
+        [AllowAnonymous]
+        [HttpPost("sendEmail")]
+        public async Task<IActionResult> SendEmail([FromBody] EmailRequest emailRequest)
+        {
+            try
+            {
+                 _emailService.SendEmailAsync(emailRequest.ToEmail, emailRequest.Subject,emailRequest.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiValidationErrorResponse { Errors = new List<string> { ex.Message } });
+            }
+            return Ok();
         }
 
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login([FromBody] LoginDto loginDto)
         {
-            var user = await _userManager.FindByEmailAsync(loginDto.Email);
-            if (user == null)
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(loginDto.Email);
+                if (user == null)
+                    return Unauthorized(new ApiValidationErrorResponse { Errors = new List<string> { "Wrong email or password! " } });
+                var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
+                if (result)
+                    return new UserDto
+                    {
+                        DisplayName = user.DisplayName,
+                        Username = user.UserName,
+                        Token = await _tokenService.CreateToken(user),
+                        Photos = _mediator.Send(new PhotosByUserId.Query { UserId = user.Id }).Result
+                    };
                 return Unauthorized(new ApiValidationErrorResponse { Errors = new List<string> { "Wrong email or password! " } });
-            var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
-            if (result)
-                return new UserDto
-                {
-                    DisplayName = user.DisplayName,
-                    Username = user.UserName,
-                    Token = await _tokenService.CreateToken(user),
-                    Image = null
-                };
-            return Unauthorized(new ApiValidationErrorResponse { Errors = new List<string> { "Wrong email or password! " } });
+            }
+
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiValidationErrorResponse { Errors = new List<string> { ex.Message } });
+            }
         }
+
+        
 
         [AllowAnonymous]
         [HttpPost("registerAdmin")]
@@ -136,7 +172,8 @@ namespace ZayadaAPI.Controllers
                 Username = user.UserName,
                 Email = user.Email,
                 Image = null,
-                PersonalTrainer = await _mediator.Send(new PersonalTrainerById.Query { IdString = user.Id })
+                PersonalTrainer = await _mediator.Send(new PersonalTrainerById.Query { IdString = user.Id }),
+                Photos = await _mediator.Send(new PhotosByUserId.Query { UserId = user.Id })
             }).ToList();
 
             return Ok(mappedUsers.AsEnumerable().Select(x => x.Result).ToList());
@@ -150,6 +187,7 @@ namespace ZayadaAPI.Controllers
                 public string Username { get; set; }
                 public string Image { get; set; }
                 public PersonalTrainersToReturnDto PersonalTrainer { get; set; }
+                public IEnumerable<Photo> Photos { get; set; }
             }
     }
 }

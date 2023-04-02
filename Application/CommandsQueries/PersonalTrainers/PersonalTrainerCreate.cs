@@ -1,12 +1,12 @@
-﻿using Application.Dtos;
-using Application.PersonalTrainers.Validators;
+﻿using Application.CommandsQueries.PersonalTrainers.Validators;
+using Application.Dtos;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
 using FluentValidation;
 using MediatR;
 
-namespace Application.PersonalTrainers
+namespace Application.CommandsQueries.PersonalTrainers
 {
     public class PersonalTrainerCreate
     {
@@ -31,15 +31,15 @@ namespace Application.PersonalTrainers
             public Handler(IGenericRepository<PersonalTrainer> personalTrainerRepository, IMapper mapper)
             {
                 _personalTrainerRepository = personalTrainerRepository;
-                _mapper= mapper;
+                _mapper = mapper;
             }
 
             public async Task Handle(Command request, CancellationToken cancellationToken)
             {
-                var mappedTrainer = _mapper.Map<PersonalTrainersToPost,PersonalTrainer>(request.PersonalTrainer);
+                var mappedTrainer = _mapper.Map<PersonalTrainersToPost, PersonalTrainer>(request.PersonalTrainer);
                 await _personalTrainerRepository.AddAsync(mappedTrainer);
                 await Task.CompletedTask;
             }
-        }   
+        }
     }
 }

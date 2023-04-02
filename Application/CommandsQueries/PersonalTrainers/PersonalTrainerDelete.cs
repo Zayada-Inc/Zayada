@@ -3,7 +3,7 @@ using Domain.Interfaces;
 using Domain.Specifications.PersonalTrainers;
 using MediatR;
 
-namespace Application.PersonalTrainers
+namespace Application.CommandsQueries.PersonalTrainers
 {
     public class PersonalTrainerDelete
     {
@@ -25,9 +25,9 @@ namespace Application.PersonalTrainers
             {
                 var spec = new PersonalTrainersSpecification(request.Id);
                 var trainer = await _personalTrainerRepo.GetEntityWithSpec(spec);
-                if(trainer != null)
+                if (trainer != null)
                 {
-                  await  _personalTrainerRepo.DeleteAsync(spec);
+                    await _personalTrainerRepo.DeleteAsync(spec);
                 }
 
                 await Task.CompletedTask;
