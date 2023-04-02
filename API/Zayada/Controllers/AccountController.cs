@@ -36,42 +36,57 @@ namespace ZayadaAPI.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registerDto)
         {
-            var user = new AppUser
+            try
             {
-                DisplayName = registerDto.DisplayName,
-                Email = registerDto.Email,
-                Bio = "",
-                UserName = registerDto.Username
-            };
-
-            var result = await _userManager.CreateAsync(user, registerDto.Password);
-
-            if (result.Succeeded)
-            {
-                var resultRole = await _userManager.AddToRoleAsync(user, UserRoles.User);
-
-                if (resultRole.Succeeded)
+                var user = new AppUser
                 {
-                    return Ok(new UserDto
-                    {
-                        DisplayName = user.DisplayName,
-                        Photos = null,
-                        Token = await _tokenService.CreateToken(user),
-                        Username = user.UserName,
-                        // PersonalTrainer = null
+                    DisplayName = registerDto.DisplayName,
+                    Email = registerDto.Email,
+                    Bio = "",
+                    UserName = registerDto.Username
+                };
 
-                    });
+                var result = await _userManager.CreateAsync(user, registerDto.Password);
+
+                if (result.Succeeded)
+                {
+                    var resultRole = await _userManager.AddToRoleAsync(user, UserRoles.User);
+
+                    if (resultRole.Succeeded)
+                    {
+                        return Ok(new UserDto
+                        {
+                            DisplayName = user.DisplayName,
+                            Photos = null,
+                            Token = await _tokenService.CreateToken(user),
+                            Username = user.UserName,
+                            // PersonalTrainer = null
+
+                        });
+                    }
                 }
+                return BadRequest(IdentityError.Response(result));
             }
 
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiValidationErrorResponse { Errors = new List<string> { ex.Message } });
+            }
 
-            return BadRequest(IdentityError.Response(result));
+            
         }
         [AllowAnonymous]
         [HttpPost("sendEmail")]
         public async Task<IActionResult> SendEmail([FromBody] EmailRequest emailRequest)
         {
-             await _emailService.SendEmailAsync(emailRequest.ToEmail, emailRequest.Subject, _emailService.EmailMessage(emailRequest.Message));
+            try
+            {
+                 _emailService.SendEmailAsync(emailRequest.ToEmail, emailRequest.Subject,emailRequest.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiValidationErrorResponse { Errors = new List<string> { ex.Message } });
+            }
             return Ok();
         }
 
@@ -79,20 +94,30 @@ namespace ZayadaAPI.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login([FromBody] LoginDto loginDto)
         {
-            var user = await _userManager.FindByEmailAsync(loginDto.Email);
-            if (user == null)
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(loginDto.Email);
+                if (user == null)
+                    return Unauthorized(new ApiValidationErrorResponse { Errors = new List<string> { "Wrong email or password! " } });
+                var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
+                if (result)
+                    return new UserDto
+                    {
+                        DisplayName = user.DisplayName,
+                        Username = user.UserName,
+                        Token = await _tokenService.CreateToken(user),
+                        Photos = _mediator.Send(new PhotosByUserId.Query { UserId = user.Id }).Result
+                    };
                 return Unauthorized(new ApiValidationErrorResponse { Errors = new List<string> { "Wrong email or password! " } });
-            var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
-            if (result)
-                return new UserDto
-                {
-                    DisplayName = user.DisplayName,
-                    Username = user.UserName,
-                    Token = await _tokenService.CreateToken(user),
-                    Photos = _mediator.Send(new PhotosByUserId.Query { UserId = user.Id }).Result
-                };
-            return Unauthorized(new ApiValidationErrorResponse { Errors = new List<string> { "Wrong email or password! " } });
+            }
+
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiValidationErrorResponse { Errors = new List<string> { ex.Message } });
+            }
         }
+
+        
 
         [AllowAnonymous]
         [HttpPost("registerAdmin")]

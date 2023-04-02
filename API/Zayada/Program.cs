@@ -49,9 +49,21 @@ builder.Services.AddSwaggerGen(option =>
             new string[]{}
         }
     });
-}); 
+});
+
+    // Get the current environment.
+    var env = builder.Services.BuildServiceProvider().GetRequiredService<IHostEnvironment>();
+
+    // Construct the path to the database file.
+    var dbPath =Path.GetFullPath(Path.Combine(env.ContentRootPath,"zayada.db"));
+
+    // Set up the connection string with the correct path.
+    var connectionString = $"Data Source={dbPath}";
+
+    // Configure the rest of your services...
+
 builder.Services.AddDbContext<DataContext>(opt =>
-    opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"),
+    opt.UseSqlite(connectionString,
     b => b.MigrationsAssembly(nameof(Persistence))
         ));
 builder.Services.Configure<ApiBehaviorOptions>(options =>
@@ -84,6 +96,9 @@ var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
 // Configure the HTTP request pipeline.
+app.UseSwagger();
+app.UseSwaggerUI();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

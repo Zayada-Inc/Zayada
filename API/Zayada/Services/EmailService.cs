@@ -1,34 +1,47 @@
 ﻿using System.Net.Mail;
 using System.Net;
+using sib_api_v3_sdk.Client;
+using sib_api_v3_sdk.Model;
+using sib_api_v3_sdk.Api;
 
 namespace ZayadaAPI.Services
 {
     public class EmailService
     {
-        private readonly string _smtpServer = "smtp-mail.outlook.com";
-        private readonly int _port = 587;
+        private readonly string _smtpServer = "smtp-relay.sendinblue.com";
+        private readonly int _port = 465;
         private readonly string _fromEmail = "zayada.inc@outlook.com";
-        private readonly string _password = "EH)s^av6R,Ji_bd";
+        private readonly string apiKey = "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";
 
-        public async Task SendEmailAsync(string toEmail, string subject, string message)
+        public async void SendEmailAsync(string toEmail, string subject, string message)
         {
-            using (var mail = new MailMessage())
-            {
-                mail.From = new MailAddress(_fromEmail);
-                mail.To.Add(toEmail);
-                mail.Subject = subject;
-                mail.Body = message;
-                mail.IsBodyHtml = true;
+            Configuration.Default.ApiKey.Add("api-key", apiKey);
 
-                using (var smtpClient = new SmtpClient(_smtpServer, _port))
+            var apiInstance = new TransactionalEmailsApi();
+            var sendSmtpEmail = new SendSmtpEmail(
+                sender: new SendSmtpEmailSender(
+                    email: _fromEmail
+                ),
+                to: new List<SendSmtpEmailTo>
                 {
-                    smtpClient.UseDefaultCredentials = false;
-                    smtpClient.Credentials = new NetworkCredential(_fromEmail, _password);
-                    smtpClient.EnableSsl = true;
+                    new SendSmtpEmailTo(
+                        email: toEmail
+                    )
+                },
+                subject: subject,
+                htmlContent: EmailMessage(message)
+            );
 
-                    await smtpClient.SendMailAsync(mail);
-                }
+            try
+            {
+                apiInstance.SendTransacEmailAsync(sendSmtpEmail);
+                Console.WriteLine("Email sent successfully.");
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An error occurred while sending the email: " + ex.Message);
+            }
+          
         }
         public string EmailMessage(string text)
         {

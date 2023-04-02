@@ -1,14 +1,10 @@
 ﻿using Application.CommandsQueries.PersonalTrainers;
 using Application.Dtos;
-using BrianMed.SmartCrop;
 using Domain.Entities.IdentityEntities;
 using Domain.Helpers;
 using Domain.Specifications.PersonalTrainers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
-using System.Net.Http.Headers;
 using ZayadaAPI.Errors;
 
 namespace ZayadaAPI.Controllers
