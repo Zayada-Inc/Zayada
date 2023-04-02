@@ -23,11 +23,21 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 14
+          cache: 'npm'
 
-      - name: Install dependencies and build project
+      - name: Clear npm cache
+        run: |
+          cd Clients/frontend/
+          npm cache clean --force
+
+      - name: Install dependencies
         run: |
           cd Clients/frontend/
           npm ci
+
+      - name: Build project
+        run: |
+          cd Clients/frontend/
           npm run build
 
       - name: Build And Deploy
