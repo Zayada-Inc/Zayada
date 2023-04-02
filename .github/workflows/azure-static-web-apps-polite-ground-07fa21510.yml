@@ -24,6 +24,7 @@ jobs:
         with:
           node-version: 14
           cache: 'npm'
+          cache-dependency-path: 'Clients/frontend/package-lock.json'
 
       - name: Clear npm cache
         run: |
