@@ -1,7 +1,7 @@
 ﻿using Application.Dtos;
 using FluentValidation;
 
-namespace Application.Gyms.GymValidator
+namespace Application.CommandsQueries.Gyms.GymValidator
 {
     public class Validator : AbstractValidator<GymsToPostDto>
     {

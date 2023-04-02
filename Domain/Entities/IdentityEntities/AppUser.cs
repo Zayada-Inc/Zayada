@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities.IdentityEntities
 {
@@ -8,5 +7,6 @@ namespace Domain.Entities.IdentityEntities
         public string DisplayName { get; set; }
         public string Bio { get; set; }
         public PersonalTrainer PersonalTrainer { get; set; }
+        public ICollection<Photo> Photos { get; set; }
     }
 }

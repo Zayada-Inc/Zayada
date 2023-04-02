@@ -1,9 +1,13 @@
-﻿using Application.Gyms;
-using Domain.Interfaces;
+﻿using Domain.Interfaces;
 using Persistence.Data.Repository;
 using Application.Helpers;
 using FluentValidation.AspNetCore;
 using FluentValidation;
+using Application.CommandsQueries.Gyms;
+using Application.Services.Photos.Interfaces;
+using Application.Services.Photos;
+using Application.Services.Users;
+using Application.Interfaces;
 
 namespace ZayadaAPI.Extensions
 {
@@ -17,6 +21,9 @@ namespace ZayadaAPI.Extensions
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(GymsList.Handler).Assembly));
             services.AddFluentValidationAutoValidation();
             services.AddValidatorsFromAssemblyContaining(typeof(GymCreate));
+            services.AddHttpContextAccessor();
+            services.AddScoped<IUserAccesor,UserAccessor>();
+            services.AddScoped<IPhotoAccessor, PhotoAccessor>();
 
         }
     }
