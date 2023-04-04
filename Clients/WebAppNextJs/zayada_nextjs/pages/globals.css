@@ -1,6 +1,8 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@import 'flowbite/dist/flowbite.min.css';
+
 :root {
   --max-width: 1100px;
   --border-radius: 12px;

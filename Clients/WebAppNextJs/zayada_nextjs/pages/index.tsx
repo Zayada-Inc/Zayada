@@ -1,8 +1,10 @@
-'use client'
+
 import { Navbar, Button } from "flowbite-react";
+import RootLayout from "./layout";
 
 export default function Home() {
   return (
+    <RootLayout>
     <main className=" min-h-screen w-screen bg-slate-200">
       <main className="min-h-screen w-screen bg-slate-200">
       <Navbar
@@ -51,5 +53,7 @@ export default function Home() {
         </div>
       </main>
     </main>
+    </RootLayout>
   );
+
 }
