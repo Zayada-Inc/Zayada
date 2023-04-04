@@ -29,6 +29,7 @@ jobs:
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
           app_location: "Clients/WebAppNextJs/zayada_nextjs" # App source code path
           ###### End of Repository/Build Configurations ######
+          output_location: "./"
           is_static_export: true
 
   close_pull_request_job:
