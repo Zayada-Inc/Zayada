@@ -1,6 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy ASP.Net Core app to Azure Web App - ZayadaAPI
 
 on:
@@ -21,6 +18,9 @@ jobs:
         with:
           dotnet-version: '3.1'
           include-prerelease: true
+
+      - name: Restore dependencies
+        run: dotnet restore API/Zayada/Zayada.sln
 
       - name: Build with dotnet
         run: dotnet build API/Zayada/Zayada.sln --configuration Release
