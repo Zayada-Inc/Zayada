@@ -1,17 +1,21 @@
 ﻿
 namespace IApplication.Services.Photos
 {
-    public static class CloudinarySettings
+    public class CloudinarySettings
     {
+
         public static string Secret()
         {
+            var test = Environment.GetEnvironmentVariable("CloudinaryKey");
             return Environment.GetEnvironmentVariable(EnvironmentVariables.CloudinaryKey);
         }
+    }
 
-        public static class EnvironmentVariables
-        {
-            public static string CloudinaryKey = "CloudinaryKey";
-            public static string StripeKey = "StripeKey";
-        }
+    //will be moved to a separate file
+    public static class EnvironmentVariables
+    {
+        public const string CloudinaryKey = "CloudinaryKey";
+        public const string StripeKey = "StripeKey";
+        public const string SendInBlueKey = "SendInBlueKey";
     }
 }
