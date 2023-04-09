@@ -4,12 +4,13 @@ using ZayadaAPI.Errors;
 using Microsoft.AspNetCore.Authorization;
 using Domain.Entities.IdentityEntities;
 using Application.CommandsQueries.Gyms;
+using Application.Helpers;
 
 namespace ZayadaAPI.Controllers
 {
     public class GymController: BaseApiController
     {
-
+        [Cached(30)]
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<GymsToReturnDto>>> GetGyms()
         {
@@ -31,6 +32,7 @@ namespace ZayadaAPI.Controllers
             return Ok(data);
         }
         */
+        [Cached(30)]
         [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("{id}")]
         public async Task<ActionResult<GymsToReturnDto>> GetGymById(int id)
@@ -43,6 +45,7 @@ namespace ZayadaAPI.Controllers
 
             return Ok(gym);
         }
+
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPost]
         public async Task<ActionResult<GymsToPostDto>> AddGym([FromQuery] GymsToPostDto gym)

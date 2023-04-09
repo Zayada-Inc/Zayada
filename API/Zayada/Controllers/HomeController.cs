@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Application.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.Metadata.Ecma335;
 
@@ -8,7 +9,7 @@ namespace ZayadaAPI.Controllers
     [AllowAnonymous]
     public class HomeController : BaseApiController
     {
-
+        [Cached(60)]
         [HttpGet]
         public ActionResult GetHome()
         {

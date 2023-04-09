@@ -8,15 +8,25 @@ using Application.Services.Photos.Interfaces;
 using Application.Services.Photos;
 using Application.Services.Users;
 using Application.Interfaces;
+using StackExchange.Redis;
+using Application.Services.Cache;
+using IApplication.Services.Photos;
 
 namespace ZayadaAPI.Extensions
 {
     public static class ApplicationServicesExtensio
     {
-        public static void AddApplicationServices(this IServiceCollection services)
+        public static void AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
 
+            services.AddSingleton<IResponseCacheService, ResponseCacheService>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddSingleton<IConnectionMultiplexer>( c =>
+                {
+                var options = ConfigurationOptions.Parse(Environment.GetEnvironmentVariable(EnvironmentVariables.Redis), true);
+                return ConnectionMultiplexer.Connect(options);
+                }
+                );
             services.AddAutoMapper(typeof(MappingProfiles));
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(GymsList.Handler).Assembly));
             services.AddFluentValidationAutoValidation();
