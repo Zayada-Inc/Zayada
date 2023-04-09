@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.IdentityEntities;
+using IApplication.Services.Photos;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -32,7 +33,7 @@ namespace ZayadaAPI.Services
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
             
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable(EnvironmentVariables.ZayadaApiKey)));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var tokenDescriptor = new SecurityTokenDescriptor

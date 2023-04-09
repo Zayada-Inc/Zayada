@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.IdentityEntities;
+using IApplication.Services.Photos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -33,7 +34,7 @@ namespace ZayadaAPI.Extensions
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Token:Key"])),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable(EnvironmentVariables.ZayadaApiKey))),
                         ValidIssuer = config["Token:Issuer"],
                         ValidateIssuer = false,
                         ValidateAudience = false,
