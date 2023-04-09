@@ -1,5 +1,6 @@
 ﻿using Application.CommandsQueries.PersonalTrainers;
 using Application.Dtos;
+using Application.Helpers;
 using Domain.Entities.IdentityEntities;
 using Domain.Helpers;
 using Domain.Specifications.PersonalTrainers;
@@ -18,6 +19,7 @@ namespace ZayadaAPI.Controllers
 
         }
 
+        [Cached(30)]
         [HttpGet]
         public async Task<ActionResult<Pagination<PersonalTrainersToReturnDto>>> GetTrainers([FromQuery] PersonalTrainersParam personalTrainersParam)
         {
@@ -44,6 +46,7 @@ namespace ZayadaAPI.Controllers
             return Ok();
         }
 
+        [Cached(30)]
         [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("{id}")]
         public async Task<ActionResult<PersonalTrainersToReturnDto>> GetTrainerById(string id)

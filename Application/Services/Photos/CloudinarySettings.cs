@@ -18,5 +18,6 @@ namespace IApplication.Services.Photos
         public const string StripeKey = "StripeKey";
         public const string SendInBlueKey = "SendInBlueKey";
         public const string ZayadaApiKey = "ZayadaApiKey";
+        public const string Redis = "Redis";
     }
 }

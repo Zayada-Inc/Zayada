@@ -1,6 +1,7 @@
 ﻿using Application.CommandsQueries.PersonalTrainers;
 using Application.CommandsQueries.Photos;
 using Application.Dtos;
+using Application.Helpers;
 using Domain.Entities;
 using Domain.Entities.IdentityEntities;
 using MediatR;
@@ -159,6 +160,7 @@ namespace ZayadaAPI.Controllers
 
         }
 
+        [Cached(30)]
         [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("getAllUsers")]
         public async Task<ActionResult<List<UserReturnDto>>> GetAllUsers()
