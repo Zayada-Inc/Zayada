@@ -1,15 +1,17 @@
-﻿using Application.CommandsQueries.PersonalTrainers;
+﻿using Application.CommandsQueries.Email;
+using Application.CommandsQueries.PersonalTrainers;
 using Application.CommandsQueries.Photos;
 using Application.Dtos;
 using Application.Helpers;
+using Application.Services.Email;
 using Domain.Entities;
 using Domain.Entities.IdentityEntities;
+using Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Net.Mail;
 using ZayadaAPI.Errors;
 using ZayadaAPI.Services;
 using IdentityError = ZayadaAPI.Errors.IdentityError;
@@ -20,18 +22,18 @@ namespace ZayadaAPI.Controllers
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
-        private readonly EmailService _emailService;
+        private readonly IEmailService _emailService;
         private readonly UserManager<AppUser> _userManager;
         private readonly TokenService _tokenService;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IMediator _mediator;
-        public AccountController(UserManager<AppUser> userManager, TokenService tokenService, RoleManager<IdentityRole> roleManager, IMediator mediator)
+        public AccountController(UserManager<AppUser> userManager, TokenService tokenService, RoleManager<IdentityRole> roleManager, IMediator mediator, IEmailService emailService)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _roleManager = roleManager;
             _mediator = mediator;
-            _emailService = new EmailService();
+            _emailService = emailService;
         }
         [AllowAnonymous]
         [HttpPost("register")]
@@ -76,19 +78,12 @@ namespace ZayadaAPI.Controllers
 
             
         }
-        [AllowAnonymous]
+
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpPost("sendEmail")]
         public async Task<IActionResult> SendEmail([FromBody] EmailRequest emailRequest)
         {
-            try
-            {
-                 _emailService.SendEmailAsync(emailRequest.ToEmail, emailRequest.Subject,emailRequest.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ApiValidationErrorResponse { Errors = new List<string> { ex.Message } });
-            }
-            return Ok();
+            return Ok(await _mediator.Send(new EmailCreate.Command { EmailRequest = emailRequest }));
         }
 
         [AllowAnonymous]

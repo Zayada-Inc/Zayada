@@ -2,45 +2,48 @@
 using sib_api_v3_sdk.Model;
 using sib_api_v3_sdk.Api;
 using IApplication.Services.Photos;
+using Domain.Interfaces;
+using Task = System.Threading.Tasks.Task;
 
-namespace ZayadaAPI.Services
+namespace Application.Services.Email
 {
-    public class EmailService
+    public class EmailService : IEmailService
     {
         private readonly string _smtpServer = "smtp-relay.sendinblue.com";
         private readonly int _port = 465;
         private readonly string _fromEmail = "zayada.inc@outlook.com";
         private readonly string? apiKey = Environment.GetEnvironmentVariable(EnvironmentVariables.SendInBlueKey);
 
-        public async void SendEmailAsync(string toEmail, string subject, string message)
-        {
+        public EmailService() {
+            if(!Configuration.Default.ApiKey.ContainsKey("api-key"))
             Configuration.Default.ApiKey.Add("api-key", apiKey);
+        }
 
-            var apiInstance = new TransactionalEmailsApi();
-            var sendSmtpEmail = new SendSmtpEmail(
-                sender: new SendSmtpEmailSender(
-                    email: _fromEmail
-                ),
-                to: new List<SendSmtpEmailTo>
-                {
-                    new SendSmtpEmailTo(
-                        email: toEmail
-                    )
-                },
-                subject: subject,
-                htmlContent: EmailMessage(message)
-            );
-
+        public async Task SendEmailAsync(string toEmail, string subject, string message)
+        {
             try
             {
-                apiInstance.SendTransacEmailAsync(sendSmtpEmail);
-                Console.WriteLine("Email sent successfully.");
+                var apiInstance = new TransactionalEmailsApi();
+                var sendSmtpEmail = new SendSmtpEmail(
+                    sender: new SendSmtpEmailSender(
+                        email: _fromEmail
+                    ),
+                    to: new List<SendSmtpEmailTo>
+                    {
+            new SendSmtpEmailTo(
+                email: toEmail
+            )
+                    },
+                    subject: subject,
+                    htmlContent: EmailMessage(message)
+                );
+
+                await apiInstance.SendTransacEmailAsync(sendSmtpEmail);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("An error occurred while sending the email: " + ex.Message);
+                 ex.Message.ToString();
             }
-
         }
         public string EmailMessage(string text)
         {
@@ -94,7 +97,7 @@ namespace ZayadaAPI.Services
     <div class=""container"">
         <h1>Hello From Zayada!</h1>
         <p>{text}</p>
-        <img src=""https://upload.wikimedia.org/wikipedia/el/3/35/La_cr%C3%B3nica_.jpg"" alt=""La Crónica"">
+        <img src=""https://res.cloudinary.com/dgwkfkpve/image/upload/v1680804744/ozsrf72ko2ia9obn40iz.png"" alt=""La Crónica"">
     </div>
 </body>
 </html>";
