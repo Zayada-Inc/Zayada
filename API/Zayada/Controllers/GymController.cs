@@ -22,16 +22,7 @@ namespace ZayadaAPI.Controllers
 
             return Ok(gyms);
         }
-        /*
-        // to be removed
-        [HttpGet("testKey")]
 
-        public  ActionResult TestKey()
-        {
-            var data = Environment.GetEnvironmentVariable(EnvironmentVariables.CloudinaryKey);
-            return Ok(data);
-        }
-        */
         [Cached(30)]
         [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("{id}")]
