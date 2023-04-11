@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Persistence;
+using StackExchange.Redis;
 using ZayadaAPI.Errors;
 using ZayadaAPI.Extensions;
 using ZayadaAPI.MiddleWare;
@@ -98,6 +99,15 @@ app.UseStatusCodePagesWithReExecute("/errors/{0}");
 // Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
+
+app.Services.GetService<IHostApplicationLifetime>()?.ApplicationStopping.Register(() =>
+{
+    var connectionMultiplexer = app.Services.GetService<IConnectionMultiplexer>();
+    if (connectionMultiplexer != null)
+    {
+        connectionMultiplexer.Close();
+    }
+});
 
 if (app.Environment.IsDevelopment())
 {

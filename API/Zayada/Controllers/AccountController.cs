@@ -146,7 +146,7 @@ namespace ZayadaAPI.Controllers
                 await _userManager.AddToRoleAsync(user, UserRoles.Admin);
             }
 
-            if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
+            if (await _roleManager.RoleExistsAsync(UserRoles.User))
             {
                 await _userManager.AddToRoleAsync(user, UserRoles.User);
             }
