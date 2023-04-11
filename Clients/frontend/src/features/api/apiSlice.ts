@@ -5,7 +5,7 @@ import { IAuthenticationResponse, ILoginRequest, IRegisterRequest } from './type
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:5000/api',
+    baseUrl: 'http://localhost:5001/api',
     prepareHeaders: (headers) => {
       if (localStorage.getItem('token')) {
         headers.set('authorization', `Bearer ${localStorage.getItem('token')}`);
