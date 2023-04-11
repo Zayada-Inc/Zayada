@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
-          
+
       - name: Setup Node.js environment
         uses: actions/setup-node@v2
         with:
@@ -30,17 +30,14 @@ jobs:
         run: |
           cd Clients/frontend/
           npm cache clean --force
-
       - name: Install dependencies
         run: |
           cd Clients/frontend/
           npm ci
-
       - name: Build project
         run: |
           cd Clients/frontend/
           npm run build
-
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
