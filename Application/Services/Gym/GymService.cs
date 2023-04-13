@@ -87,56 +87,34 @@ namespace Application.Services
 
             return planDtos;
         }
-
-        public async Task AddEmployeeToGymAsync(EmployeeToPostDto employee, string requestingUserId)
+        public async Task ValidateEmployee(string userId, int gymId)
         {
-            var requestingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == requestingUserId);
-            if (requestingUser == null)
+            var userExists = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (userExists == null)
             {
-                throw new Exception("Failed to find requesting user.");
+                throw new Exception("User not found.");
             }
-
-            var requestingUserEmployee = await _dbContext.Employees.FirstOrDefaultAsync(e => e.UserId == requestingUserId);
-            if (requestingUserEmployee == null)
-            {
-                throw new Exception("Requesting user is not an employee.");
-            }
-
-            var gym = await _dbContext.Gyms.FirstOrDefaultAsync(g => g.Id == requestingUserEmployee.GymId);
-            if (gym == null)
-            {
-                throw new Exception("Failed to find gym for requesting user.");
-            }
-
-            var alreadyEmployee = await _dbContext.Employees.AnyAsync(e => e.UserId == employee.UserId);
-            if (alreadyEmployee)
+            var isEmployee = await _dbContext.Employees.AnyAsync(e => e.UserId == userId);
+            if (isEmployee)
             {
                 throw new Exception("User is already an employee.");
             }
 
-            var isSuperAdmin = await IsUserInRoleAsync(requestingUser, UserRoles.Admin);
-            var isGymAdmin = await IsUserInRoleAsync(requestingUser, UserRoles.GymAdmin);
-            if (!isSuperAdmin && !(isGymAdmin && requestingUserEmployee.GymId == employee.GymId))
+            var gymExists = await _dbContext.Gyms.FirstOrDefaultAsync(g => g.Id == gymId);
+            if (gymExists == null)
             {
-                throw new Exception("User does not have permission to add employees to this gym.");
+                throw new Exception("Gym not found.");
             }
+        }
 
-            var employeeUsernameExists = await _userManager.FindByIdAsync(employee.UserId);
-            if (employeeUsernameExists == null)
+        public async Task AddEmployeeToGymAsync(EmployeeToPostDto employee, string requestingUserId)
+        {
+            var hasAccess = await IsGymAdminForCurrentGymAsync(requestingUserId, employee.GymId);
+            if (!hasAccess)
             {
-                throw new Exception("Failed to find user with username.");
+                throw new Exception("User does not have access to add employees to this gym.");
             }
-
-            // Add the gym and admin employee to the database
-            if (!_roleManager.RoleExistsAsync(UserRoles.GymEmployee).Result)
-            {
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.GymEmployee));
-            }
-            if (await _roleManager.RoleExistsAsync(UserRoles.GymEmployee))
-            {
-                _userManager.AddToRoleAsync(await _userManager.FindByIdAsync(employee.UserId), UserRoles.GymAdmin).Wait();
-            }
-
+           await ValidateEmployee(employee.UserId, employee.GymId);
             var mappedEmployee = new Employee
             {
                 GymId = employee.GymId,

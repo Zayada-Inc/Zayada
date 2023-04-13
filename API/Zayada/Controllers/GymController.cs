@@ -65,20 +65,14 @@ namespace ZayadaAPI.Controllers
         [HttpPost("add-employee")]
         public async Task<IActionResult> AddEmployeeToGym([FromBody] EmployeeToPostDto employee)
         {
-            var requestingUserId = UserAccessor.GetCurrentUsername();
-
             try
             {
-               var mappedData = new Employee
-                {
-                    
-                };
-                await GymService.AddEmployeeToGymAsync(employee, requestingUserId);
-                return Ok();
+                var result = await Mediator.Send(new GymAddEmployee.Command { Employee = employee });
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ApiException(400,ex.Message));
             }
         }
 
