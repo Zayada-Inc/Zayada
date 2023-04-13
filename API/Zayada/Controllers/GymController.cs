@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Domain.Entities.IdentityEntities;
 using Application.CommandsQueries.Gyms;
 using Application.Helpers;
+using Application.CommandsQueries.GymSubscriptionPlan;
+using Domain.Entities;
 
 namespace ZayadaAPI.Controllers
 {
@@ -37,6 +39,7 @@ namespace ZayadaAPI.Controllers
             return Ok(gym);
         }
 
+        /*
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPost]
         public async Task<ActionResult<GymsToPostDto>> AddGym([FromQuery] GymsToPostDto gym)
@@ -47,6 +50,74 @@ namespace ZayadaAPI.Controllers
             }
             await Mediator.Send(new GymCreate.Command { Gym = gym });
             return Ok(Task.CompletedTask);
+        }
+        */
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpPost]
+        public async Task<IActionResult> CreateGym([FromQuery]GymsToPostDto gymToPostDto)
+        { 
+            var result = await Mediator.Send( new GymCreate.Command { Gym = gymToPostDto});
+
+            return Ok(result);
+        }
+
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.GymAdmin)]
+        [HttpPost("add-employee")]
+        public async Task<IActionResult> AddEmployeeToGym([FromBody] EmployeeToPostDto employee)
+        {
+            var requestingUserId = UserAccessor.GetCurrentUsername();
+
+            try
+            {
+               var mappedData = new Employee
+                {
+                    
+                };
+                await GymService.AddEmployeeToGymAsync(employee, requestingUserId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.GymAdmin)]
+        [HttpGet("getEmployees")]
+        public async Task<IActionResult> GetEmployees()
+        {
+            try
+            {
+                var employees = await GymService.GetEmployeesForCurrentGymAsync();
+                return Ok(employees);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.GymAdmin)]
+        [HttpPost("subscriptionPlan")]
+        public async Task<ActionResult<SubscriptionPlanToPostDto>> AddSubscriptionPlanToGym([FromQuery] SubscriptionPlanToPostDto plan)
+        {
+                await Mediator.Send(new GymSubscriptionPlanCreate.Command { SubscriptionPlanToPostDto = plan });
+                return Ok(Task.CompletedTask);
+        }
+
+        [HttpGet("{gymId}/plans")]
+        public async Task<ActionResult<List<SubscriptionPlanToReturnDto>>> GetAllPlansForGym(int gymId)
+        {
+            var plans = await GymService.GetAllPlansForGymAsync(gymId);
+            return Ok(plans);
+        }
+
+        [HttpGet("subscriptionPlan/{id}")]
+        public async Task<ActionResult<SubscriptionPlanToReturnDto>> GetById(int id)
+        {
+            var query = new SubscriptionPlanById.Query { Id = id };
+            var subscriptionPlan = await Mediator.Send(query);
+            return Ok(subscriptionPlan);
         }
     }
 }

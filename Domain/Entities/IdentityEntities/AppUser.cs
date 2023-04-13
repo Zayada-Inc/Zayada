@@ -8,5 +8,6 @@ namespace Domain.Entities.IdentityEntities
         public string Bio { get; set; }
         public PersonalTrainer PersonalTrainer { get; set; }
         public ICollection<Photo> Photos { get; set; }
+        public ICollection<GymMembership> GymMemberships { get; set; }
     }
 }

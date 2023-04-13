@@ -54,8 +54,7 @@ namespace ZayadaAPI.Controllers
                 if (result.Succeeded)
                 {
                     var resultRole = await _userManager.AddToRoleAsync(user, UserRoles.User);
-
-                    if (resultRole.Succeeded)
+                    await _mediator.Send( new EmailCreate.Command { EmailRequest = new EmailRequest { ToEmail = user.Email, Subject = "Welcome to Zayada", Message = $"Welcome to Zayada {user.DisplayName}" } });
                     {
                         return Ok(new UserDto
                         {
