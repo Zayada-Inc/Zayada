@@ -5,5 +5,11 @@ interface LogoProps {
 }
 
 export const Logo: FC<LogoProps> = ({ isBlack = false }) => {
-  return <img src='logo.png' alt='zayada logo' className={`h-[50px] ${isBlack ? 'invert' : ''}`} />;
+  return (
+    <img
+      src='logo.png'
+      alt='zayada logo'
+      className={`h-[50px] w-[50px] ${isBlack ? 'invert' : ''}`}
+    />
+  );
 };

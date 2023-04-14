@@ -13,6 +13,8 @@ export interface ILoginRequest {
 export interface IAuthenticationResponse {
   displayName: string;
   username: string;
-  image: string;
+  photos: {
+    url: '';
+  }[];
   token?: string;
 }
