@@ -106,12 +106,5 @@ namespace ZayadaAPI.Controllers
             return Ok(plans);
         }
 
-        [HttpGet("subscriptionPlan/{id}")]
-        public async Task<ActionResult<SubscriptionPlanToReturnDto>> GetById(int id)
-        {
-            var query = new SubscriptionPlanById.Query { Id = id };
-            var subscriptionPlan = await Mediator.Send(query);
-            return Ok(subscriptionPlan);
-        }
     }
 }

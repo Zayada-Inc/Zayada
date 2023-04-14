@@ -61,6 +61,7 @@ namespace Application.Services
 
 
             await _dbContext.Employees.AddAsync(adminEmployee);
+            await _dbContext.SaveChangesAsync();
 
         }
 

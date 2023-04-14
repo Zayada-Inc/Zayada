@@ -7,14 +7,14 @@ using Persistence;
 
 namespace Application.Services.Membership
 {
-    public class GymMembershipService: IGymMembershipService
+    public class GymMembershipService : IGymMembershipService
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IGenericRepository<GymMembership> _gymMembershipRepo;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly DataContext _dataContext;
 
-        public GymMembershipService(UserManager<AppUser> userManager, IGenericRepository<GymMembership> gymMembershipRepo, RoleManager<IdentityRole> roleManager,DataContext dataContext)
+        public GymMembershipService(UserManager<AppUser> userManager, IGenericRepository<GymMembership> gymMembershipRepo, RoleManager<IdentityRole> roleManager, DataContext dataContext)
         {
             _userManager = userManager;
             _gymMembershipRepo = gymMembershipRepo;
@@ -31,11 +31,11 @@ namespace Application.Services.Membership
             }
         }
 
-        public async Task<bool> SubscribeToGym(AppUser user, Domain.Entities.SubscriptionPlan plan)
+        public async Task<bool> SubscribeToGym(AppUser user, SubscriptionPlan plan)
         {
             await EnsureMemberRoleExistsAsync();
 
-            Gym gym = plan.Gym;
+            var gym = await _dataContext.Gyms.FindAsync(plan.GymId);
 
             DateTime startDate = DateTime.UtcNow;
             DateTime endDate = startDate.AddDays(plan.DurationInDays);
@@ -43,21 +43,33 @@ namespace Application.Services.Membership
             var gymMembership = new GymMembership
             {
                 UserId = user.Id,
-                User = user,
                 GymId = gym.Id,
-                Gym = gym,
                 MembershipStartDate = startDate,
                 MembershipEndDate = endDate,
-                PaymentAmount = plan.Price
+                PaymentAmount = plan.Price,
+                SubscriptionPlanId = plan.Id
             };
-
-            await _gymMembershipRepo.AddAsync(gymMembership);
 
             var roles = await _userManager.GetRolesAsync(user);
             if (!roles.Contains(UserRoles.Member))
             {
                 await _userManager.AddToRoleAsync(user, UserRoles.Member);
             }
+            else
+            {
+                var membership = await _dataContext.GymMemberships.FirstOrDefaultAsync(x => x.UserId == user.Id);
+                if (membership != null)
+                {
+
+                    throw new Exception($"User is already a member to Gym: {membership.Gym.GymName}");
+                }
+                else
+                {
+                    throw new Exception("User is a member but does not have a subscription!");
+                }
+            }
+
+            await _gymMembershipRepo.AddAsync(gymMembership);
 
             return true;
         }
@@ -68,16 +80,16 @@ namespace Application.Services.Membership
 
             if (gymMembership == null)
             {
-                return true; 
+                return true;
             }
 
             if (gymMembership.MembershipEndDate < DateTime.UtcNow)
             {
-                return true; 
+                return true;
             }
             else
             {
-                return false; 
+                return false;
             }
         }
 

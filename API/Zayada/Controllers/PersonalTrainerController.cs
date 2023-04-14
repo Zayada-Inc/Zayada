@@ -41,8 +41,14 @@ namespace ZayadaAPI.Controllers
                 return BadRequest(new ApiResponse(400));
             }
 
-            await Mediator.Send(new PersonalTrainerCreate.Command { PersonalTrainer = personalTrainer });
-
+            try
+            {
+                await Mediator.Send(new PersonalTrainerCreate.Command { PersonalTrainer = personalTrainer });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse(400, ex.Message));
+            }
             return Ok();
         }
 
