@@ -20,7 +20,7 @@ export const useRegister = () => {
       const user = Object.assign({}, res);
       delete user.token;
 
-      dispatch(setUser(user));
+      dispatch(setUser({ data: user }));
 
       if (res?.token) {
         localStorage.setItem('token', res.token);
