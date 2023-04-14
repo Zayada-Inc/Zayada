@@ -1,29 +1,13 @@
-import { useState } from 'react';
+import { Link } from 'react-router-dom';
+
 import { LOGIN_FIELDS, Form } from 'components/Form';
+import { FormMessage } from 'features/auth/components/FormMessage';
 import { Logo } from 'components/Logo';
-import { ILoginRequest } from 'features/api/types';
-import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
-import { IAPIError } from 'types';
-import * as yup from 'yup';
-import { useLoginMutation } from 'features/api/apiSlice';
-import { useDispatch } from 'react-redux';
-import { setUser } from 'store/slices/user';
-import { loginSchema } from '../validation/validation ';
-import { useLogin } from '../hooks/useLogin';
-import { FormMessage } from '../components/FormMessage';
+import { loginSchema } from 'features/auth/validation/validation ';
+import { useLogin } from 'features/auth/hooks/useLogin';
 
 export const Login = () => {
   const { t, onSubmit, apiValidationError } = useLogin();
-
-  const formMessage = (
-    <div className='flex gap-1'>
-      <p>{t('login.message.noAccount')}</p>
-      <Link to='/register' className='text-blue-700'>
-        {t('login.message.redirect')}
-      </Link>
-    </div>
-  );
 
   return (
     <>
