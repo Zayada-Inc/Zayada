@@ -12,6 +12,8 @@ using StackExchange.Redis;
 using Application.Services.Cache;
 using IApplication.Services.Photos;
 using Application.Services.Email;
+using Application.Services.Membership;
+using Application.Services;
 
 namespace ZayadaAPI.Extensions
 {
@@ -22,6 +24,8 @@ namespace ZayadaAPI.Extensions
 
             services.AddSingleton<IResponseCacheService, ResponseCacheService>();
             services.AddScoped<IEmailService,EmailService>();
+            services.AddScoped<IGymMembershipService,GymMembershipService>();
+            services.AddScoped<IGymService,GymService>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddSingleton<IConnectionMultiplexer>( c =>
                 {
