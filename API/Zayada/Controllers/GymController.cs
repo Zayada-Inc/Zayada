@@ -6,11 +6,11 @@ using Domain.Entities.IdentityEntities;
 using Application.CommandsQueries.Gyms;
 using Application.Helpers;
 using Application.CommandsQueries.GymSubscriptionPlan;
-using Domain.Entities;
 
 namespace ZayadaAPI.Controllers
 {
-    public class GymController: BaseApiController
+    [Authorize]
+    public class GymController : BaseApiController
     {
         [Cached(30)]
         [HttpGet]
@@ -39,26 +39,19 @@ namespace ZayadaAPI.Controllers
             return Ok(gym);
         }
 
-        /*
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPost]
-        public async Task<ActionResult<GymsToPostDto>> AddGym([FromQuery] GymsToPostDto gym)
+        public async Task<IActionResult> CreateGym([FromQuery] GymsToPostDto gymToPostDto)
         {
-            if (string.IsNullOrEmpty(gym.GymName))
+            try
             {
-                return BadRequest(new ApiResponse(400));
+                var result = await Mediator.Send(new GymCreate.Command { Gym = gymToPostDto });
+                return Ok(result);
             }
-            await Mediator.Send(new GymCreate.Command { Gym = gym });
-            return Ok(Task.CompletedTask);
-        }
-        */
-        [Authorize(Roles = UserRoles.Admin)]
-        [HttpPost]
-        public async Task<IActionResult> CreateGym([FromQuery]GymsToPostDto gymToPostDto)
-        { 
-            var result = await Mediator.Send( new GymCreate.Command { Gym = gymToPostDto});
-
-            return Ok(result);
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse(400, ex.Message));
+            }
         }
 
         [Authorize(Roles = UserRoles.Admin + "," + UserRoles.GymAdmin)]
@@ -72,22 +65,23 @@ namespace ZayadaAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new ApiException(400,ex.Message));
+                return BadRequest(new ApiException(400, ex.Message));
             }
         }
 
+        [Cached(60)]
         [Authorize(Roles = UserRoles.Admin + "," + UserRoles.GymAdmin)]
         [HttpGet("getEmployees")]
         public async Task<IActionResult> GetEmployees()
         {
             try
             {
-                var employees = await GymService.GetEmployeesForCurrentGymAsync();
+                var employees = await Mediator.Send(new GymEmployeesQuery.Query());
                 return Ok(employees);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ApiResponse(400,ex.Message));
             }
         }
 
@@ -95,15 +89,24 @@ namespace ZayadaAPI.Controllers
         [HttpPost("subscriptionPlan")]
         public async Task<ActionResult<SubscriptionPlanToPostDto>> AddSubscriptionPlanToGym([FromQuery] SubscriptionPlanToPostDto plan)
         {
-                await Mediator.Send(new GymSubscriptionPlanCreate.Command { SubscriptionPlanToPostDto = plan });
-                return Ok(Task.CompletedTask);
+            await Mediator.Send(new GymSubscriptionPlanCreate.Command { SubscriptionPlanToPostDto = plan });
+            return Ok(Task.CompletedTask);
         }
 
+        [Cached(60)]
         [HttpGet("{gymId}/plans")]
         public async Task<ActionResult<List<SubscriptionPlanToReturnDto>>> GetAllPlansForGym(int gymId)
         {
-            var plans = await GymService.GetAllPlansForGymAsync(gymId);
-            return Ok(plans);
+            try
+            {
+                var plans = await Mediator.Send(new SubscriptionPlansForGymQuery.Query { GymId = gymId });
+                return Ok(plans);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse(400, ex.Message));
+            }
+
         }
 
     }

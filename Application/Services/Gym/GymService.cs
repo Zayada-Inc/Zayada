@@ -12,7 +12,7 @@ namespace Application.Services
     {
         Task AddEmployeeToGymAsync(EmployeeToPostDto employee, string requestingUserId);
         Task CreateGymAsync(Gym gym, Employee adminEmployee);
-        Task<IEnumerable<EmployeeDto>> GetEmployeesForCurrentGymAsync();
+        Task<IEnumerable<EmployeeToReturnDto>> GetEmployeesForCurrentGymAsync();
         Task<bool> IsGymAdminForCurrentGymAsync(string userId, int gymId);
         Task<Gym> GetGymByIdAsync(int id);
 
@@ -82,9 +82,14 @@ namespace Application.Services
                 Id = p.Id,
                 Name = p.Name,
                 Description = p.Description,
+                DurationInDays = p.DurationInDays,
                 Price = p.Price,
                 GymId = p.GymId
             }).ToList();
+            if (planDtos.Count == 0)
+            {
+                throw new Exception("No plans found for this gym.");
+            }
 
             return planDtos;
         }
@@ -126,7 +131,7 @@ namespace Application.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<EmployeeDto>> GetEmployeesForCurrentGymAsync()
+        public async Task<IEnumerable<EmployeeToReturnDto>> GetEmployeesForCurrentGymAsync()
         {
             var userId = _userAccesor.GetCurrentUsername();
             var employee = await _dbContext.Employees.SingleOrDefaultAsync(e => e.UserId == userId);
@@ -153,7 +158,7 @@ namespace Application.Services
                 .Include(e => e.Gym)
                 .Where(e => e.GymId == gymId).ToListAsync();
 
-            var employeeDtos = employees.Select(e => new EmployeeDto
+            var employeeDtos = employees.Select(e => new EmployeeToReturnDto
             {
                 Id = e.Id,
                 Name = e.User.DisplayName,
@@ -204,15 +209,5 @@ namespace Application.Services
             var isGymAdmin = await IsUserInRoleAsync(user, UserRoles.GymAdmin);
             return isGymAdmin && userEmployee.GymId == gym.Id && userEmployee.GymId == gymId;
         }
-    }
-
-    public class EmployeeDto
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Role { get; set; }
-        public string UserId { get; set; }
-        public int GymId { get; set; }
-        public string GymName { get; set; }
     }
 }

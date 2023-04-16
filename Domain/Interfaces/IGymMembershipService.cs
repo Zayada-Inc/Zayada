@@ -5,7 +5,9 @@ namespace Domain.Interfaces
 {
     public interface IGymMembershipService
     {
-        Task EnsureMemberRoleExistsAsync();
+        Task<bool> CancelMembershipAsync(AppUser user, Gym gym);
+        Task<List<AppUser>> GetGymSubscribersAsync(Gym gym);
+        Task<List<GymMembership>> GetUserMembershipsAsync(AppUser user);
         Task<bool> IsMembershipExpired(AppUser user, Gym gym);
         Task<bool> SubscribeToGym(AppUser user, SubscriptionPlan plan);
     }

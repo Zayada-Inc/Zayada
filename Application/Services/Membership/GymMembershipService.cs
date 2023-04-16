@@ -4,9 +4,11 @@ using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Application.Services.Membership
 {
+
     public class GymMembershipService : IGymMembershipService
     {
         private readonly UserManager<AppUser> _userManager;
@@ -22,7 +24,7 @@ namespace Application.Services.Membership
             _dataContext = dataContext;
         }
 
-        public async Task EnsureMemberRoleExistsAsync()
+        private async Task EnsureMemberRoleExistsAsync()
         {
             if (!await _roleManager.RoleExistsAsync(UserRoles.Member))
             {
@@ -34,11 +36,14 @@ namespace Application.Services.Membership
         public async Task<bool> SubscribeToGym(AppUser user, SubscriptionPlan plan)
         {
             await EnsureMemberRoleExistsAsync();
-
             var gym = await _dataContext.Gyms.FindAsync(plan.GymId);
+            if (await IsUserSubscribedToGym(user, gym))
+            {
+                throw new Exception($"User is already a member to Gym: {gym.GymName}");
+            }
 
-            DateTime startDate = DateTime.UtcNow;
-            DateTime endDate = startDate.AddDays(plan.DurationInDays);
+            var startDate = DateTime.UtcNow;
+            var endDate = startDate.AddDays(plan.DurationInDays);
 
             var gymMembership = new GymMembership
             {
@@ -50,47 +55,73 @@ namespace Application.Services.Membership
                 SubscriptionPlanId = plan.Id
             };
 
-            var roles = await _userManager.GetRolesAsync(user);
-            if (!roles.Contains(UserRoles.Member))
+            if (!await IsUserInMemberRoleAsync(user))
             {
                 await _userManager.AddToRoleAsync(user, UserRoles.Member);
             }
-            else
-            {
-                var membership = await _dataContext.GymMemberships.FirstOrDefaultAsync(x => x.UserId == user.Id);
-                if (membership != null)
-                {
-
-                    throw new Exception($"User is already a member to Gym: {membership.Gym.GymName}");
-                }
-                else
-                {
-                    throw new Exception("User is a member but does not have a subscription!");
-                }
-            }
 
             await _gymMembershipRepo.AddAsync(gymMembership);
-
             return true;
         }
+
+        private async Task<bool> IsUserSubscribedToGym(AppUser user, Gym gym)
+        {
+            return await _dataContext.GymMemberships.AnyAsync(x => x.UserId == user.Id && x.GymId == gym.Id);
+        }
+
+        private async Task<bool> IsUserInMemberRoleAsync(AppUser user)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            return roles.Contains(UserRoles.Member);
+        }
+
         public async Task<bool> IsMembershipExpired(AppUser user, Gym gym)
         {
             var gymMembership = await _dataContext.GymMemberships.Where(x => x.UserId == user.Id && x.GymId == gym.Id)
-                .FirstOrDefaultAsync(); //TO DO: Add a specification for this
+                .FirstOrDefaultAsync();
 
             if (gymMembership == null)
             {
                 return true;
             }
 
-            if (gymMembership.MembershipEndDate < DateTime.UtcNow)
+            return gymMembership.MembershipEndDate < DateTime.UtcNow;
+        }
+
+        public async Task<List<GymMembership>> GetUserMembershipsAsync(AppUser user)
+        {
+            var data = await _dataContext.GymMemberships
+                .Where(gm => gm.UserId == user.Id)
+                .Include(x => x.Gym)
+                .ToListAsync();
+            return data;
+        }
+
+        public async Task<List<AppUser>> GetGymSubscribersAsync(Gym gym)
+        {
+            var memberships = await _dataContext.GymMemberships
+                .Include(gm => gm.User)
+                .Where(gm => gm.GymId == gym.Id)
+                .ToListAsync();
+
+            return memberships.Select(gm => gm.User).ToList();
+        }
+
+        public async Task<bool> CancelMembershipAsync(AppUser user, Gym gym)
+        {
+            var gymMembership = await _dataContext.GymMemberships
+                .Where(gm => gm.UserId == user.Id && gm.GymId == gym.Id)
+                .FirstOrDefaultAsync();
+
+            if (gymMembership == null)
             {
-                return true;
+                throw new Exception("User does not have an active membership for the specified gym.");
             }
-            else
-            {
-                return false;
-            }
+
+            _dataContext.GymMemberships.Remove(gymMembership);
+            await _dataContext.SaveChangesAsync();
+
+            return true;
         }
 
     }

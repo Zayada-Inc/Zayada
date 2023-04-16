@@ -1,4 +1,5 @@
 ﻿using Application.Dtos;
+using Application.Helpers;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Entities.IdentityEntities;
@@ -12,7 +13,7 @@ using System.Data.Common;
 namespace ZayadaAPI.Controllers
 {
     [ApiController]
-    [AllowAnonymous]
+    [Authorize]
     [Route("api/[controller]")]
     public class MembershipController: ControllerBase
     {
@@ -31,7 +32,7 @@ namespace ZayadaAPI.Controllers
         }
 
         [HttpPost("subscribeToGym")]
-        public async Task<ActionResult> SubscribeToGym([FromBody] SubscribeToGymToPostDto subscribeToGymDto)
+        public async Task<ActionResult> SubscribeToGym([FromBody] SubscribeToGymToPostDto subscribeToGymDto) //TO DO: move into service/ use CQRS   
         {
             var userId =  _userAccesor.GetCurrentUsername();
             var user = await _userManager.FindByIdAsync(userId);
@@ -56,5 +57,24 @@ namespace ZayadaAPI.Controllers
             return BadRequest("Problem subscribing to gym");
         }
 
+        [Cached(30)]
+        [HttpGet("getMembership")]
+        public async Task<IActionResult> GetUserMembership() //TO DO: move into gym service, use CQRS   
+        {
+            var user = await _userManager.FindByIdAsync(_userAccesor.GetCurrentUsername());
+            var memberships = await _gymMembershipService.GetUserMembershipsAsync(user);
+            var gymMembershipsDto = new List<MembershipToReturnDto>();
+            foreach (var membership in memberships)
+            {
+                gymMembershipsDto.Add(new MembershipToReturnDto
+                {
+                    GymName = membership.Gym.GymName,
+                    MembershipStartDate = membership.MembershipStartDate.ToShortDateString(),
+                    MembershipEndDate = membership.MembershipEndDate.ToShortDateString(),
+
+                });
+            }
+            return Ok(gymMembershipsDto);
+        }
     }
 }
