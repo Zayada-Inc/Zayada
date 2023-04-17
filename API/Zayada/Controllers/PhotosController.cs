@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ZayadaAPI.Errors;
 
 namespace ZayadaAPI.Controllers
 {
@@ -16,6 +17,21 @@ namespace ZayadaAPI.Controllers
         {
             var result = await Mediator.Send(command);
             return Ok(result);
+        }
+
+        [HttpPost("set-main")]
+        public async Task<IActionResult> SetMain([FromForm] SetMainPhoto.Command command)
+        {
+            try
+            {
+                var result = await Mediator.Send(command);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse(400, ex.Message));
+            }
+
         }
     }
 }
