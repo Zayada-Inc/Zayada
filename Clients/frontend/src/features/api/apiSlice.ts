@@ -1,11 +1,18 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { IAuthenticationResponse, ILoginRequest, IRegisterRequest } from './types';
+mport { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import {
+  IAuthenticationResponse,
+  IGetAllUsersResponse,
+  ILoginRequest,
+  IRegisterRequest,
+} from 'features/api/types/index';
+
+import { BASE_URL } from 'features/api/constants/constants';
 
 // TO-DO: change baseQuery to env variable
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:5001/api',
+    baseUrl: BASE_URL,
     prepareHeaders: (headers) => {
       if (localStorage.getItem('token')) {
         headers.set('authorization', `Bearer ${localStorage.getItem('token')}`);
@@ -17,6 +24,9 @@ export const apiSlice = createApi({
   endpoints: (builder) => ({
     getPersonalTrainers: builder.query<any, void>({
       query: () => '/PersonalTrainer',
+    }),
+    getAllUsers: builder.query<IGetAllUsersResponse[], void>({
+      query: () => '/Account/getAllUsers',
     }),
     register: builder.mutation<IAuthenticationResponse, IRegisterRequest>({
       query: (newUser) => ({
@@ -35,4 +45,9 @@ export const apiSlice = createApi({
   }),
 });
 
-export const { useGetPersonalTrainersQuery, useRegisterMutation, useLoginMutation } = apiSlice;
+export const {
+  useGetPersonalTrainersQuery,
+  useGetAllUsersQuery,
+  useRegisterMutation,
+  useLoginMutation,
+} = apiSlice;
