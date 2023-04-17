@@ -12,6 +12,7 @@ import {
   Transition,
   Paper,
   rem,
+  Skeleton,
 } from '@mantine/core';
 
 import { selectUser } from 'store/slices/user';
@@ -118,7 +119,11 @@ export const Header = () => {
       <Container className={classes.header}>
         <Text className={classes.welcome}> Welcome back! </Text>
         <Container className={classes.user}>
-          <Avatar src={photos[0].url} radius={'xl'}></Avatar>
+          {photos.length ? (
+            <Avatar src={photos[0].url} radius={'xl'} />
+          ) : (
+            <Skeleton height={40} circle />
+          )}
           <Text> {username} </Text>
         </Container>
 

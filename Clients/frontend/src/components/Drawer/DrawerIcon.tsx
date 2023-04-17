@@ -1,6 +1,6 @@
-import { Tooltip, UnstyledButton, createStyles, rem } from '@mantine/core';
 import { FC } from 'react';
 import { Icon } from 'tabler-icons-react';
+import { Tooltip, UnstyledButton, createStyles, rem } from '@mantine/core';
 
 const useStyles = createStyles((theme) => ({
   link: {
