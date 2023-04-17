@@ -50,7 +50,7 @@ namespace ZayadaAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new ApiResponse(400, ex.Message));
+                return BadRequest(new ApiValidationErrorResponse(ex.Message));
             }
         }
 
@@ -65,7 +65,7 @@ namespace ZayadaAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new ApiException(400, ex.Message));
+                return BadRequest(new ApiValidationErrorResponse(ex.Message));
             }
         }
 
@@ -81,7 +81,7 @@ namespace ZayadaAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new ApiResponse(400,ex.Message));
+                return BadRequest(new ApiValidationErrorResponse(ex.Message));
             }
         }
 
@@ -104,7 +104,7 @@ namespace ZayadaAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new ApiResponse(400, ex.Message));
+                return BadRequest(new ApiValidationErrorResponse(ex.Message));
             }
 
         }
