@@ -1,5 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { IAuthenticationResponse, ILoginRequest, IRegisterRequest } from 'features/api/types/index';
+import {
+  IAuthenticationResponse,
+  IGetAllUsersResponse,
+  ILoginRequest,
+  IRegisterRequest,
+} from 'features/api/types/index';
 
 import { BASE_URL } from 'features/api/constants/constants';
 
@@ -20,6 +25,9 @@ export const apiSlice = createApi({
     getPersonalTrainers: builder.query<any, void>({
       query: () => '/PersonalTrainer',
     }),
+    getAllUsers: builder.query<IGetAllUsersResponse[], void>({
+      query: () => '/Account/getAllUsers',
+    }),
     register: builder.mutation<IAuthenticationResponse, IRegisterRequest>({
       query: (newUser) => ({
         url: `/Account/register`,
@@ -37,4 +45,9 @@ export const apiSlice = createApi({
   }),
 });
 
-export const { useGetPersonalTrainersQuery, useRegisterMutation, useLoginMutation } = apiSlice;
+export const {
+  useGetPersonalTrainersQuery,
+  useGetAllUsersQuery,
+  useRegisterMutation,
+  useLoginMutation,
+} = apiSlice;

@@ -11,7 +11,7 @@ namespace Domain.Specifications.PersonalTrainers
     {
         public PersonalTrainersWithFilterForCountSpecification(PersonalTrainersParam personalTrainersParam)
             : base(x =>
-                           (string.IsNullOrEmpty(personalTrainersParam.Search) || x.Name.ToLower().Contains(personalTrainersParam.Search)) &&
+                           (string.IsNullOrEmpty(personalTrainersParam.Search) || x.User.DisplayName.ToLower().Contains(personalTrainersParam.Search)) &&
                            (!personalTrainersParam.GymId.HasValue || x.GymId == personalTrainersParam.GymId)
                        )
         {
