@@ -6,6 +6,11 @@
         {
         }
 
+        public ApiValidationErrorResponse(string message) : base(400)
+        {
+            Errors = new[] { message };
+        }
+
         public IEnumerable<string> Errors { get; set; }
     }
 }

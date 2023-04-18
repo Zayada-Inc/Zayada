@@ -26,6 +26,7 @@ namespace ZayadaAPI.Extensions
             services.AddScoped<IEmailService,EmailService>();
             services.AddScoped<IGymMembershipService,GymMembershipService>();
             services.AddScoped<IGymService,GymService>();
+            services.AddScoped<IUserRepository,UserRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddSingleton<IConnectionMultiplexer>( c =>
                 {

@@ -11,4 +11,11 @@ namespace Application.Dtos
         public string Email { get; set; }
         public IEnumerable<Photo> Photos { get; set; }
     }
+
+    public class PersonalTrainersAdminToReturnDto
+    {
+        public string Id { get; set; }
+        public string? Certifications { get; set; }
+        public string? GymName { get; set; }
+    }
 }

@@ -6,6 +6,8 @@ using Domain.Entities.IdentityEntities;
 using Application.CommandsQueries.Gyms;
 using Application.Helpers;
 using Application.CommandsQueries.GymSubscriptionPlan;
+using Domain.Specifications.Gyms;
+using Domain.Helpers;
 
 namespace ZayadaAPI.Controllers
 {
@@ -14,14 +16,14 @@ namespace ZayadaAPI.Controllers
     {
         [Cached(30)]
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<GymsToReturnDto>>> GetGyms()
+        public async Task<ActionResult<Pagination<GymsToReturnDto>>> GetGyms([FromQuery]GymsParam gymsParam)
         {
-            var gyms = await Mediator.Send(new GymsList.Query());
-            if (gyms.Count == 0)
+            var gyms = await Mediator.Send(new GymsList.Query { GymParams = gymsParam});
+            
+            if (gyms.Data.Count == 0)
             {
                 return NotFound(new ApiResponse(404));
             }
-
             return Ok(gyms);
         }
 
@@ -50,7 +52,7 @@ namespace ZayadaAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new ApiResponse(400, ex.Message));
+                return BadRequest(new ApiValidationErrorResponse(ex.Message));
             }
         }
 
@@ -65,7 +67,7 @@ namespace ZayadaAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new ApiException(400, ex.Message));
+                return BadRequest(new ApiValidationErrorResponse(ex.Message));
             }
         }
 
@@ -81,7 +83,7 @@ namespace ZayadaAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new ApiResponse(400,ex.Message));
+                return BadRequest(new ApiValidationErrorResponse(ex.Message));
             }
         }
 
@@ -104,7 +106,7 @@ namespace ZayadaAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new ApiResponse(400, ex.Message));
+                return BadRequest(new ApiValidationErrorResponse(ex.Message));
             }
 
         }
