@@ -20,27 +20,20 @@ export interface IAuthenticationResponse {
 }
 
 export interface IGetAllUsersResponse {
-  id: string;
-  displayName: string;
-  email: string;
-  username: string;
-  personalTrainer: {
+  data: {
     id: string;
-    certifications: string;
-    gymName: string;
-    username: string;
+    displayName: string;
     email: string;
+    username: string;
+    personalTrainer: {
+      id: string;
+      certifications: string;
+      gymName: string;
+    };
     photos: {
       id: string;
       url: string;
       isMain: boolean;
     }[];
-  };
-  photos: {
-    id: string;
-    url: string;
-    isMain: boolean;
   }[];
-  // TO-DO: discuss /w Mihnea if this is still being used
-  image?: string;
 }

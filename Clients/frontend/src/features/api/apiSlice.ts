@@ -25,7 +25,7 @@ export const apiSlice = createApi({
     getPersonalTrainers: builder.query<any, void>({
       query: () => '/PersonalTrainer',
     }),
-    getAllUsers: builder.query<IGetAllUsersResponse[], void>({
+    getAllUsers: builder.query<IGetAllUsersResponse, void>({
       query: () => '/Account/getAllUsers',
     }),
     register: builder.mutation<IAuthenticationResponse, IRegisterRequest>({
