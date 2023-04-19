@@ -18,7 +18,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           theme={{
             fontFamily: 'Poppins, sans-serif',
             colors: {
-              secondaryColors: ['#FFFFFF', '#1E1E1E', '#FF8940'],
+              secondaryColors: ['#FFFFFF', '#1E1E1E', '#FF8940', '#FFA064', '#2563EB'],
             },
             fontSizes: {
               xs: '0.6rem',
