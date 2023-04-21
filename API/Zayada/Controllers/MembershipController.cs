@@ -109,27 +109,5 @@ namespace ZayadaAPI.Controllers
 
             return Ok(result);
         }
-
-        /*
-        [AllowAnonymous]
-        [HttpPost("stripe-webhook")]
-        public async Task<IActionResult> StripeWebhook()
-        {
-            var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-            var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], "YOUR_WEBHOOK_SECRET");
-
-            if (stripeEvent.Type == "checkout.session.completed")
-            {
-                var session = stripeEvent.Data.Object as Session;
-                var userId = session.Metadata["user_id"];
-
-                // Perform necessary actions, such as updating the user's subscription status in your database
-
-                return Ok();
-            }
-
-            return BadRequest("Unrecognized event");
-        }
-        */
     }
 }
