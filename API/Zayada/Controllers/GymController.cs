@@ -8,10 +8,7 @@ using Application.Helpers;
 using Application.CommandsQueries.GymSubscriptionPlan;
 using Domain.Specifications.Gyms;
 using Domain.Helpers;
-using Domain.Entities;
 using Persistence;
-using Microsoft.EntityFrameworkCore;
-using Application.CommandsQueries.Payment;
 
 namespace ZayadaAPI.Controllers
 {

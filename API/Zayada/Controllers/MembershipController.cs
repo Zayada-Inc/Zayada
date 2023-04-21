@@ -15,7 +15,7 @@ namespace ZayadaAPI.Controllers
     [ApiController]
     [Authorize]
     [Route("api/[controller]")]
-    public class MembershipController: ControllerBase
+    public class MembershipController: ControllerBase  
     {
         private readonly IGymMembershipService _gymMembershipService;
         private readonly UserManager<AppUser> _userManager;

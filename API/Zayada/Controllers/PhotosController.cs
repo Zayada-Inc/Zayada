@@ -1,8 +1,5 @@
 ﻿using Application.CommandsQueries.Photos;
-using Domain.Entities;
 using Domain.Entities.IdentityEntities;
-using MediatR;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ZayadaAPI.Errors;

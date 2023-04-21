@@ -34,7 +34,7 @@ namespace ZayadaAPI.Controllers
         }
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registerDto)
+        public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registerDto)  //TO DO: move into service/ use CQRS
         {
             try
             {
@@ -77,7 +77,7 @@ namespace ZayadaAPI.Controllers
 
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPost("sendEmail")]
-        public async Task<IActionResult> SendEmail([FromBody] EmailRequest emailRequest)
+        public async Task<IActionResult> SendEmail([FromBody] EmailRequest emailRequest)  //TO DO: move into service/ use CQRS
         {
             return Ok(await _mediator.Send(new EmailCreate.Command { EmailRequest = emailRequest }));
         }
@@ -113,7 +113,7 @@ namespace ZayadaAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("registerAdmin")]
-        public async Task<ActionResult<UserDto>> RegisterAdmin([FromBody] RegisterDto model)
+        public async Task<ActionResult<UserDto>> RegisterAdmin([FromBody] RegisterDto model)  //TO DO: move into service/ use CQRS
         {
             var userExists = await _userManager.FindByEmailAsync(model.Email);
             int count = _userManager.Users.Count();
