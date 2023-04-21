@@ -8,12 +8,22 @@ using Application.Helpers;
 using Application.CommandsQueries.GymSubscriptionPlan;
 using Domain.Specifications.Gyms;
 using Domain.Helpers;
+using Domain.Entities;
+using Persistence;
+using Microsoft.EntityFrameworkCore;
+using Application.CommandsQueries.Payment;
 
 namespace ZayadaAPI.Controllers
 {
     [Authorize]
     public class GymController : BaseApiController
     {
+        private readonly DataContext _dataContext;
+
+        public GymController(DataContext dataContext) {   
+                  _dataContext = dataContext;
+               }
+
         [Cached(30)]
         [HttpGet]
         public async Task<ActionResult<Pagination<GymsToReturnDto>>> GetGyms([FromQuery]GymsParam gymsParam)

@@ -1,4 +1,6 @@
 ﻿
+using Domain.Entities;
+
 namespace Application.Dtos
 {
     public class MembershipToReturnDto
@@ -6,5 +8,6 @@ namespace Application.Dtos
         public string MembershipStartDate { get; set; }
         public string MembershipEndDate { get; set; }
         public string GymName { get; set; }
+        public SubscriptionPlanToReturnDto SubscriptionPlan { get; set; }
     }
 }
