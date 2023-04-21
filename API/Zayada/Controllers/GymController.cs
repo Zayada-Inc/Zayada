@@ -8,18 +8,12 @@ using Application.Helpers;
 using Application.CommandsQueries.GymSubscriptionPlan;
 using Domain.Specifications.Gyms;
 using Domain.Helpers;
-using Persistence;
 
 namespace ZayadaAPI.Controllers
 {
     [Authorize]
     public class GymController : BaseApiController
     {
-        private readonly DataContext _dataContext;
-
-        public GymController(DataContext dataContext) {   
-                  _dataContext = dataContext;
-               }
 
         [Cached(30)]
         [HttpGet]
