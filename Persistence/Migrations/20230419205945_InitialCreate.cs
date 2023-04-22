@@ -173,6 +173,27 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PaymentTokens",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Token = table.Column<string>(type: "TEXT", nullable: false),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    IsUsed = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PaymentTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Photos",
                 columns: table => new
                 {
@@ -366,6 +387,11 @@ namespace Persistence.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PaymentTokens_UserId",
+                table: "PaymentTokens",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PersonalTrainers_GymId",
                 table: "PersonalTrainers",
                 column: "GymId");
@@ -410,6 +436,9 @@ namespace Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "GymMemberships");
+
+            migrationBuilder.DropTable(
+                name: "PaymentTokens");
 
             migrationBuilder.DropTable(
                 name: "PersonalTrainers");

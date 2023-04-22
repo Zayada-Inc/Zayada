@@ -14,6 +14,7 @@ namespace ZayadaAPI.Controllers
     [Authorize]
     public class GymController : BaseApiController
     {
+
         [Cached(30)]
         [HttpGet]
         public async Task<ActionResult<Pagination<GymsToReturnDto>>> GetGyms([FromQuery]GymsParam gymsParam)

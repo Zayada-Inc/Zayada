@@ -17,5 +17,6 @@ namespace Persistence
         public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
         public DbSet<GymMembership> GymMemberships { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<PaymentToken> PaymentTokens { get; set; }
     }
 }

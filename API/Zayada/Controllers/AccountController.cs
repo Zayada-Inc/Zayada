@@ -1,11 +1,9 @@
 ﻿using Application.CommandsQueries.Email;
-using Application.CommandsQueries.PersonalTrainers;
 using Application.CommandsQueries.Photos;
 using Application.CommandsQueries.Users;
 using Application.Dtos;
 using Application.Helpers;
 using Application.Services.Email;
-using Domain.Entities;
 using Domain.Entities.IdentityEntities;
 using Domain.Helpers;
 using Domain.Specifications.Users;
@@ -13,7 +11,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ZayadaAPI.Errors;
 using ZayadaAPI.Services;
 using IdentityError = ZayadaAPI.Errors.IdentityError;
@@ -37,7 +34,7 @@ namespace ZayadaAPI.Controllers
         }
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registerDto)
+        public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registerDto)  //TO DO: move into service/ use CQRS
         {
             try
             {
@@ -80,7 +77,7 @@ namespace ZayadaAPI.Controllers
 
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPost("sendEmail")]
-        public async Task<IActionResult> SendEmail([FromBody] EmailRequest emailRequest)
+        public async Task<IActionResult> SendEmail([FromBody] EmailRequest emailRequest)  //TO DO: move into service/ use CQRS
         {
             return Ok(await _mediator.Send(new EmailCreate.Command { EmailRequest = emailRequest }));
         }
@@ -116,7 +113,7 @@ namespace ZayadaAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("registerAdmin")]
-        public async Task<ActionResult<UserDto>> RegisterAdmin([FromBody] RegisterDto model)
+        public async Task<ActionResult<UserDto>> RegisterAdmin([FromBody] RegisterDto model)  //TO DO: move into service/ use CQRS
         {
             var userExists = await _userManager.FindByEmailAsync(model.Email);
             int count = _userManager.Users.Count();

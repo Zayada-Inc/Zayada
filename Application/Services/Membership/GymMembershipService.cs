@@ -37,7 +37,7 @@ namespace Application.Services.Membership
         {
             await EnsureMemberRoleExistsAsync();
             var gym = await _dataContext.Gyms.FindAsync(plan.GymId);
-            if (await IsUserSubscribedToGym(user, gym))
+            if (await IsUserSubscribedToGym(user, gym) && (await IsMembershipExpired(user, gym) == false))
             {
                 throw new Exception($"User is already a member to Gym: {gym.GymName}");
             }
@@ -64,7 +64,7 @@ namespace Application.Services.Membership
             return true;
         }
 
-        private async Task<bool> IsUserSubscribedToGym(AppUser user, Gym gym)
+        public async Task<bool> IsUserSubscribedToGym(AppUser user, Gym gym)
         {
             return await _dataContext.GymMemberships.AnyAsync(x => x.UserId == user.Id && x.GymId == gym.Id);
         }
@@ -77,15 +77,16 @@ namespace Application.Services.Membership
 
         public async Task<bool> IsMembershipExpired(AppUser user, Gym gym)
         {
-            var gymMembership = await _dataContext.GymMemberships.Where(x => x.UserId == user.Id && x.GymId == gym.Id)
-                .FirstOrDefaultAsync();
+            var activeGymMemberships = await _dataContext.GymMemberships
+        .Where(x => x.UserId == user.Id && x.GymId == gym.Id && x.MembershipEndDate >= DateTime.UtcNow)
+        .ToListAsync();
 
-            if (gymMembership == null)
+            if (activeGymMemberships.Count > 0)
             {
-                return true;
+                return false;
             }
 
-            return gymMembership.MembershipEndDate < DateTime.UtcNow;
+            return true;
         }
 
         public async Task<List<GymMembership>> GetUserMembershipsAsync(AppUser user)
@@ -93,6 +94,7 @@ namespace Application.Services.Membership
             var data = await _dataContext.GymMemberships
                 .Where(gm => gm.UserId == user.Id)
                 .Include(x => x.Gym)
+                .Include(x => x.SubscriptionPlan)
                 .ToListAsync();
             return data;
         }
