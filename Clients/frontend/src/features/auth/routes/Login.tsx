@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom';
-
 import { LOGIN_FIELDS, Form } from 'components/Form';
 import { FormMessage } from 'features/auth/components/FormMessage';
 import { Logo } from 'components/Logo';

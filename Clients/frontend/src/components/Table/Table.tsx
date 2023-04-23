@@ -1,0 +1,115 @@
+import React from 'react';
+import { Checkbox, Table as MantineTable, ScrollArea, rem } from '@mantine/core';
+
+import { useTable } from 'components/Table/hooks/useTable';
+import { isPrimitive } from 'utils/isPrimitive';
+import { objectValues } from 'utils/objectValues';
+
+export interface ITableItem {
+  id: string;
+  [key: string]: any;
+}
+
+type TableHeadersType<T extends ITableItem> = Partial<Record<keyof T, string>>;
+type CustomRendersType<T extends ITableItem> = Partial<
+  Record<keyof T, (item: T) => React.ReactNode>
+>;
+
+interface TableProps<T extends ITableItem> {
+  data: T[];
+  headers: TableHeadersType<T>;
+  onlySelectedHeaders?: boolean;
+  customRenders?: CustomRendersType<T>;
+  CustomRow?: React.FC<{ item: T }>;
+}
+
+export const Table = <T extends ITableItem>({
+  data,
+  headers,
+  customRenders,
+  CustomRow,
+  onlySelectedHeaders = false,
+}: TableProps<T>) => {
+  const { classes, cx, selection, toggleAll, toggleRow } = useTable(data);
+
+  const renderRow = (item: T, i: number) => {
+    const selected = selection.includes(item.id);
+
+    return (
+      <tr key={i} className={cx({ [classes.selectedRow]: selected })}>
+        <td>
+          <Checkbox
+            checked={selection.includes(item.id)}
+            onChange={() => toggleRow(item.id)}
+            transitionDuration={0}
+            color='orange'
+          />
+        </td>
+
+        {Object.keys(onlySelectedHeaders ? headers : item).map((key, j) => {
+          const customRender = customRenders?.[key];
+          if (customRender) {
+            return <td key={j}>{customRender(item)}</td>;
+          }
+
+          const shortenedValues =
+            item[key] && item[key].length > 30
+              ? item[key].slice(0, 5).concat(' ', '...')
+              : item[key];
+
+          return (
+            <React.Fragment key={j}>
+              {isPrimitive(item[key]) ? <td>{shortenedValues}</td> : ''}
+            </React.Fragment>
+          );
+        })}
+      </tr>
+    );
+  };
+
+  return (
+    <ScrollArea sx={{ margin: '20px 20px' }}>
+      <MantineTable maw={750} horizontalSpacing='sm' highlightOnHover>
+        <thead>
+          <tr className={classes.header}>
+            <th style={{ width: rem(40) }}>
+              <Checkbox
+                onChange={toggleAll}
+                checked={selection.length === data.length}
+                indeterminate={selection.length > 0 && selection.length !== data.length}
+                transitionDuration={0}
+                color='orange'
+              />
+            </th>
+            {objectValues(headers).map((header, i) => (
+              <th key={i} style={{ fontSize: rem(14) }}>
+                {header}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {CustomRow
+            ? data.map((item, i) => {
+                const selected = selection.includes(item.id);
+
+                return (
+                  <tr key={i} className={cx({ [classes.selectedRow]: selected })}>
+                    <td>
+                      <Checkbox
+                        checked={selection.includes(item.id)}
+                        onChange={() => toggleRow(item.id)}
+                        transitionDuration={500}
+                        color='orange'
+                      />
+                    </td>
+                    <CustomRow item={item} />
+                  </tr>
+                );
+              })
+            : data.map(renderRow)}
+        </tbody>
+      </MantineTable>
+    </ScrollArea>
+  );
+};

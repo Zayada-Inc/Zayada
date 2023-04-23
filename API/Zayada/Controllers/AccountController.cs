@@ -1,17 +1,16 @@
 ﻿using Application.CommandsQueries.Email;
-using Application.CommandsQueries.PersonalTrainers;
 using Application.CommandsQueries.Photos;
+using Application.CommandsQueries.Users;
 using Application.Dtos;
 using Application.Helpers;
 using Application.Services.Email;
-using Domain.Entities;
 using Domain.Entities.IdentityEntities;
-using Domain.Interfaces;
+using Domain.Helpers;
+using Domain.Specifications.Users;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ZayadaAPI.Errors;
 using ZayadaAPI.Services;
 using IdentityError = ZayadaAPI.Errors.IdentityError;
@@ -22,22 +21,20 @@ namespace ZayadaAPI.Controllers
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
-        private readonly IEmailService _emailService;
         private readonly UserManager<AppUser> _userManager;
         private readonly TokenService _tokenService;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IMediator _mediator;
-        public AccountController(UserManager<AppUser> userManager, TokenService tokenService, RoleManager<IdentityRole> roleManager, IMediator mediator, IEmailService emailService)
+        public AccountController(UserManager<AppUser> userManager, TokenService tokenService, RoleManager<IdentityRole> roleManager, IMediator mediator)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _roleManager = roleManager;
             _mediator = mediator;
-            _emailService = emailService;
         }
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registerDto)
+        public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registerDto)  //TO DO: move into service/ use CQRS
         {
             try
             {
@@ -54,8 +51,7 @@ namespace ZayadaAPI.Controllers
                 if (result.Succeeded)
                 {
                     var resultRole = await _userManager.AddToRoleAsync(user, UserRoles.User);
-
-                    if (resultRole.Succeeded)
+                    await _mediator.Send( new EmailCreate.Command { EmailRequest = new EmailRequest { ToEmail = user.Email, Subject = "Welcome to Zayada", Message = $"Welcome to Zayada {user.DisplayName}" } });
                     {
                         return Ok(new UserDto
                         {
@@ -81,7 +77,7 @@ namespace ZayadaAPI.Controllers
 
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPost("sendEmail")]
-        public async Task<IActionResult> SendEmail([FromBody] EmailRequest emailRequest)
+        public async Task<IActionResult> SendEmail([FromBody] EmailRequest emailRequest)  //TO DO: move into service/ use CQRS
         {
             return Ok(await _mediator.Send(new EmailCreate.Command { EmailRequest = emailRequest }));
         }
@@ -117,7 +113,7 @@ namespace ZayadaAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("registerAdmin")]
-        public async Task<ActionResult<UserDto>> RegisterAdmin([FromBody] RegisterDto model)
+        public async Task<ActionResult<UserDto>> RegisterAdmin([FromBody] RegisterDto model)  //TO DO: move into service/ use CQRS
         {
             var userExists = await _userManager.FindByEmailAsync(model.Email);
             int count = _userManager.Users.Count();
@@ -155,36 +151,15 @@ namespace ZayadaAPI.Controllers
 
         }
 
-        [Cached(30)]
+        [Cached(60)]
         [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("getAllUsers")]
-        public async Task<ActionResult<List<UserReturnDto>>> GetAllUsers()
+        public async Task<ActionResult<Pagination<UserReturnDto>>> GetAllUsers([FromQuery]UsersParam usersParam)
         {
-            var users = await _userManager.Users.ToListAsync();
-           
-            var mappedUsers = users.Select(async user => new UserReturnDto
-            {
-                Id = user.Id,
-                DisplayName = user.DisplayName,
-                Username = user.UserName,
-                Email = user.Email,
-                Image = null,
-                PersonalTrainer = await _mediator.Send(new PersonalTrainerById.Query { IdString = user.Id }),
-                Photos = await _mediator.Send(new PhotosByUserId.Query { UserId = user.Id })
-            }).ToList();
-
-            return Ok(mappedUsers.AsEnumerable().Select(x => x.Result).ToList());
+            var data = _mediator.Send(new UsersList.Query { UsersParams = usersParam }).Result;
+            if(data.Data.Count == 0)
+                return NotFound(new ApiResponse(404));
+            return Ok(data);
         }
-
-        public class UserReturnDto
-            {
-                public string Id { get; set; }
-                public string DisplayName { get; set; } 
-                public string Email { get; set; }
-                public string Username { get; set; }
-                public string Image { get; set; }
-                public PersonalTrainersToReturnDto PersonalTrainer { get; set; }
-                public IEnumerable<Photo> Photos { get; set; }
-            }
     }
 }

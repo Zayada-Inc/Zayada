@@ -1,16 +1,19 @@
 ﻿using Application.CommandsQueries.Gyms.GymValidator;
 using Application.Dtos;
+using Application.Services;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Entities.IdentityEntities;
 using Domain.Interfaces;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 
 namespace Application.CommandsQueries.Gyms
 {
     public class GymCreate
     {
-        public class Command : IRequest
+        public class Command : IRequest<GymsToPostDto>
         {
             public GymsToPostDto Gym { get; set; }
 
@@ -23,23 +26,48 @@ namespace Application.CommandsQueries.Gyms
                 RuleFor(x => x.Gym).SetValidator(new Validator());
             }
         }
-        public class Handler : IRequestHandler<Command>
+        public class Handler : IRequestHandler<Command, GymsToPostDto>
         {
-            private readonly IGenericRepository<Gym> _gymRepository;
+            private readonly IGymService _gymService;
+            private readonly UserManager<AppUser> _userManager;
             private readonly IMapper _mapper;
 
-            public Handler(IGenericRepository<Gym> gymRepository, IMapper mapper)
+            public Handler(IGymService gymService, UserManager<AppUser> userManager, IMapper mapper)
             {
-                _gymRepository = gymRepository;
+                _gymService = gymService;
+                _userManager = userManager;
                 _mapper = mapper;
             }
 
-            public async Task Handle(Command request, CancellationToken cancellationToken)
+            public async Task<GymsToPostDto> Handle(Command request, CancellationToken cancellationToken)
             {
-                var mappedGym = _mapper.Map<GymsToPostDto, Gym>(request.Gym);
-                await _gymRepository.AddAsync(mappedGym);
-                await Task.CompletedTask;
+                var gymDto = request.Gym;
+                var gym = new Gym
+                {
+                    GymName = gymDto.GymName,
+                    GymAddress = gymDto.GymAddress
+                };
+
+                var adminUser = await _userManager.FindByIdAsync(gymDto.AdminUserId);
+
+                if (adminUser == null)
+                {
+                    throw new Exception("Failed to find gym admin user.");
+                }
+
+                var employee = new Employee
+                {
+                    Gym = gym,
+                    User = adminUser,
+                    Role = UserRoles.GymAdmin
+                };
+
+                await _gymService.CreateGymAsync(gym, employee);
+
+                return gymDto;
             }
+
+
         }
     }
 }

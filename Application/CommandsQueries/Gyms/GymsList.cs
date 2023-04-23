@@ -1,16 +1,21 @@
 ﻿using Application.Dtos;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Helpers;
 using Domain.Interfaces;
+using Domain.Specifications.Gyms;
 using MediatR;
 
 namespace Application.CommandsQueries.Gyms
 {
     public class GymsList
     {
-        public class Query : IRequest<IReadOnlyList<GymsToReturnDto>> { }
+        public class Query : IRequest<Pagination<GymsToReturnDto>> 
+        {
+            public GymsParam GymParams { get; set; }
+        }
 
-        public class Handler : IRequestHandler<Query, IReadOnlyList<GymsToReturnDto>>
+        public class Handler : IRequestHandler<Query, Pagination<GymsToReturnDto>>
         {
             private readonly IGenericRepository<Gym> _gymRepository;
             private readonly IMapper _mapper;
@@ -21,11 +26,15 @@ namespace Application.CommandsQueries.Gyms
                 _mapper = mapper;
             }
 
-            public async Task<IReadOnlyList<GymsToReturnDto>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Pagination<GymsToReturnDto>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var gyms = await _gymRepository.ListAllAsync();
-                var data = _mapper.Map<IReadOnlyList<Gym>, IReadOnlyList<GymsToReturnDto>>(gyms);
-                return data;
+               var spec = new GymsSpecification(request.GymParams);
+               var countSpec = new GymsWithFilterForCountSpecification(request.GymParams);
+               var totalItems = await _gymRepository.CountAsync(countSpec);
+               var gyms = await _gymRepository.ListAsync(spec);
+               var data = _mapper.Map<IReadOnlyList<Gym>, IReadOnlyList<GymsToReturnDto>>(gyms);
+
+                return new Pagination<GymsToReturnDto>(request.GymParams.PageIndex, request.GymParams.PageSize, totalItems, data);
             }
         }
     }

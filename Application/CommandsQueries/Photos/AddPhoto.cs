@@ -31,7 +31,7 @@ namespace Application.CommandsQueries.Photos
             {
                var user = await _context.Users.Include(p => p.Photos)
                     .SingleOrDefaultAsync(x => x.Id == _userAccesor.GetCurrentUsername());
-                var tst = _userAccesor.GetCurrentUsername();
+
                 if (user == null)
                 {
                     return null;

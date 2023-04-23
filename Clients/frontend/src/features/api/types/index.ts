@@ -18,3 +18,22 @@ export interface IAuthenticationResponse {
   }[];
   token?: string;
 }
+
+export interface IGetAllUsersResponse {
+  data: {
+    id: string;
+    displayName: string;
+    email: string;
+    username: string;
+    personalTrainer: {
+      id: string;
+      certifications: string;
+      gymName: string;
+    };
+    photos: {
+      id: string;
+      url: string;
+      isMain: boolean;
+    }[];
+  }[];
+}

@@ -40,7 +40,7 @@ export const Form: FC<FormProps> = ({ fields, onSubmit, schema, message, apiVali
       ))}
       {message && <p>{message}</p>}
       {apiValidationError && (
-        <p className='text-red-500 text-sm'>{apiValidationError.data.message}</p>
+        <p className='text-red-500 text-sm'>{apiValidationError?.data?.message}</p>
       )}
       {/* TO-DO: replace with btn component */}
       <input type='submit' className='bg-blue-600 text-white py-2 mt-20 rounded-md' />

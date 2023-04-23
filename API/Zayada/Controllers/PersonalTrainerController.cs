@@ -12,13 +12,6 @@ namespace ZayadaAPI.Controllers
 {
     public class PersonalTrainerController : BaseApiController
     {
-        private readonly IWebHostEnvironment _hostingEnvironment;
-        public PersonalTrainerController(IWebHostEnvironment webHostEnvironment)
-        {
-            _hostingEnvironment = webHostEnvironment;
-
-        }
-
         [Cached(30)]
         [HttpGet]
         public async Task<ActionResult<Pagination<PersonalTrainersToReturnDto>>> GetTrainers([FromQuery] PersonalTrainersParam personalTrainersParam)
@@ -32,7 +25,7 @@ namespace ZayadaAPI.Controllers
             return Ok(trainers);
         }
 
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.GymAdmin)]
         [HttpPost]
         public async Task<ActionResult<PersonalTrainersToPost>> AddTrainer([FromQuery] PersonalTrainersToPost personalTrainer)
         {
@@ -41,8 +34,14 @@ namespace ZayadaAPI.Controllers
                 return BadRequest(new ApiResponse(400));
             }
 
-            await Mediator.Send(new PersonalTrainerCreate.Command { PersonalTrainer = personalTrainer });
-
+            try
+            {
+                await Mediator.Send(new PersonalTrainerCreate.Command { PersonalTrainer = personalTrainer });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse(400, ex.Message));
+            }
             return Ok();
         }
 
