@@ -15,7 +15,7 @@ using Application.Services.Email;
 using Application.Services.Membership;
 using Application.Services;
 using Stripe;
-using Application.Services.Payment;
+using Infrastructure.Services.Payment;
 
 namespace ZayadaAPI.Extensions
 {
@@ -23,7 +23,6 @@ namespace ZayadaAPI.Extensions
     {
         public static void AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
-
             services.AddSingleton<IResponseCacheService, ResponseCacheService>();
             services.AddScoped<IEmailService,EmailService>();
             services.AddScoped<IGymMembershipService,GymMembershipService>();

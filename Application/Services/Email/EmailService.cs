@@ -2,8 +2,8 @@
 using sib_api_v3_sdk.Model;
 using sib_api_v3_sdk.Api;
 using IApplication.Services.Photos;
-using Domain.Interfaces;
 using Task = System.Threading.Tasks.Task;
+using Application.Interfaces;
 
 namespace Application.Services.Email
 {

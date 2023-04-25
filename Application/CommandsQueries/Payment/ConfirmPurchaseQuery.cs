@@ -1,6 +1,5 @@
-﻿using Application.Services.Payment;
+﻿using Application.Interfaces;
 using Domain.Entities.IdentityEntities;
-using Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

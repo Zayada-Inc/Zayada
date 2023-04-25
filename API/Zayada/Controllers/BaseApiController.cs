@@ -1,6 +1,6 @@
 ﻿using Application.Interfaces;
 using Application.Services;
-using Application.Services.Payment;
+using Infrastructure.Services.Payment;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

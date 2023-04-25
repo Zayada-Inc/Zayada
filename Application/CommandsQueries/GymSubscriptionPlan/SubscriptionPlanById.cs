@@ -1,6 +1,6 @@
-﻿using Application.Dtos;
-using AutoMapper;
+﻿using AutoMapper;
 using Domain.Interfaces;
+using Infrastructure.Dtos;
 using MediatR;
 
 namespace Application.CommandsQueries.GymSubscriptionPlan

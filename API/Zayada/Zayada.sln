@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "..\..\Domain\Doma
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistence", "..\..\Persistence\Persistence.csproj", "{1EB42220-4C5B-45D7-AF21-9AEDFC026111}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zayada.UnitTests", "..\..\Zayada.UnitTests\Zayada.UnitTests\Zayada.UnitTests.csproj", "{612A6B66-6A9D-4826-91B5-2C7E66BC97EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zayada.UnitTests", "..\..\Zayada.UnitTests\Zayada.UnitTests\Zayada.UnitTests.csproj", "{612A6B66-6A9D-4826-91B5-2C7E66BC97EB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "..\..\Infrastructure\Infrastructure\Infrastructure.csproj", "{72F7F252-0664-41EB-913D-3C610128247B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{612A6B66-6A9D-4826-91B5-2C7E66BC97EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{612A6B66-6A9D-4826-91B5-2C7E66BC97EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{612A6B66-6A9D-4826-91B5-2C7E66BC97EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72F7F252-0664-41EB-913D-3C610128247B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72F7F252-0664-41EB-913D-3C610128247B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72F7F252-0664-41EB-913D-3C610128247B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72F7F252-0664-41EB-913D-3C610128247B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

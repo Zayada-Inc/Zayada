@@ -1,6 +1,6 @@
 ﻿using Application.CommandsQueries.Email.EmailValidator;
+using Application.Interfaces;
 using Application.Services.Email;
-using Domain.Interfaces;
 using FluentValidation;
 using MediatR;
 
