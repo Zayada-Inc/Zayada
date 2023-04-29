@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store/store';
 
-type PaginatedSearchState = {
+type SearchState = {
   tables: {
     allUsers: {
       query: string;
@@ -10,7 +10,7 @@ type PaginatedSearchState = {
   };
 };
 
-const initialState: PaginatedSearchState = {
+const initialState: SearchState = {
   tables: {
     allUsers: {
       query: '',
