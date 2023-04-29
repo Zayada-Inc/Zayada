@@ -10,5 +10,7 @@ namespace Domain.Interfaces
         Task<List<GymMembership>> GetUserMembershipsAsync(AppUser user);
         Task<bool> IsMembershipExpired(AppUser user, Gym gym);
         Task<bool> SubscribeToGym(AppUser user, SubscriptionPlan plan);
+
+        Task<bool> IsUserSubscribedToGym(AppUser user, Gym gym);
     }
 }

@@ -17,7 +17,6 @@ export const Register = () => {
           </div>
           <p className='font-bold text-2xl'>{t('register.signUp')}</p>
           <div className='w-3/5'>
-            <p>mihnea123</p>
             <Form
               fields={REGISTRATION_FIELDS}
               {...{ onSubmit, apiValidationError }}

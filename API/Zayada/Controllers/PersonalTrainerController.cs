@@ -12,13 +12,6 @@ namespace ZayadaAPI.Controllers
 {
     public class PersonalTrainerController : BaseApiController
     {
-        private readonly IWebHostEnvironment _hostingEnvironment;
-        public PersonalTrainerController(IWebHostEnvironment webHostEnvironment)
-        {
-            _hostingEnvironment = webHostEnvironment;
-
-        }
-
         [Cached(30)]
         [HttpGet]
         public async Task<ActionResult<Pagination<PersonalTrainersToReturnDto>>> GetTrainers([FromQuery] PersonalTrainersParam personalTrainersParam)

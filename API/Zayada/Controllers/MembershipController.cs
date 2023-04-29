@@ -1,34 +1,36 @@
-﻿using Application.Dtos;
+﻿using Application.CommandsQueries.Payment;
+using Application.Dtos;
 using Application.Helpers;
 using Application.Interfaces;
-using Domain.Entities;
 using Domain.Entities.IdentityEntities;
 using Domain.Interfaces;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Persistence;
-using System.Data.Common;
 
 namespace ZayadaAPI.Controllers
 {
     [ApiController]
     [Authorize]
     [Route("api/[controller]")]
-    public class MembershipController: ControllerBase
+    public class MembershipController: ControllerBase  
     {
         private readonly IGymMembershipService _gymMembershipService;
         private readonly UserManager<AppUser> _userManager;
         private readonly IUserAccesor _userAccesor;
         private readonly DataContext _dataContext;
+        private readonly IMediator _mediator;
 
         public MembershipController(IGymMembershipService gymMembershipService, UserManager<AppUser> userManager,IUserAccesor userAccesor,
-            DataContext dataContext)
+            DataContext dataContext, IMediator mediator)
         {
             _dataContext = dataContext;
             _userManager = userManager;
             _userAccesor = userAccesor;
             _gymMembershipService = gymMembershipService;
+            _mediator = mediator;
         }
 
         [HttpPost("subscribeToGym")]
@@ -71,10 +73,41 @@ namespace ZayadaAPI.Controllers
                     GymName = membership.Gym.GymName,
                     MembershipStartDate = membership.MembershipStartDate.ToShortDateString(),
                     MembershipEndDate = membership.MembershipEndDate.ToShortDateString(),
-
+                    SubscriptionPlan = new()
+                    {
+                        Id = membership.SubscriptionPlanId,
+                        GymId = membership.SubscriptionPlanId,
+                        Name = membership.SubscriptionPlan.Name,
+                        Price = membership.SubscriptionPlan.Price,
+                        Description = membership.SubscriptionPlan.Description,
+                        DurationInDays = membership.SubscriptionPlan.DurationInDays,
+                    }
                 });
             }
             return Ok(gymMembershipsDto);
+        }
+
+
+        [Authorize]
+        [HttpPost("purchase-subscription-plan/{planId}")]
+        public async Task<ActionResult<string>> PurchaseSubscriptionPlan(int planId)
+        {
+            string checkoutSessionUrl = await _mediator.Send(new PurchaseSubscriptionPlanCommand.Command { PlanId = planId });
+            return Ok(new { url = checkoutSessionUrl });
+        }
+
+        [AllowAnonymous]
+        [HttpGet("confirm-purchase")]
+        public async Task<ActionResult<string>> ConfirmPurchase([FromQuery] bool success, string token, string userId, int planId)
+        {
+            string result = await _mediator.Send(new ConfirmPurchaseQuery.Query { Success = success, Token = token, UserId = userId, PlanId = planId });
+
+            if (result == "Payment failed or was canceled." || result == "Invalid or expired token.")
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
     }
 }

@@ -14,6 +14,8 @@ using IApplication.Services.Photos;
 using Application.Services.Email;
 using Application.Services.Membership;
 using Application.Services;
+using Stripe;
+using Application.Services.Payment;
 
 namespace ZayadaAPI.Extensions
 {
@@ -26,6 +28,9 @@ namespace ZayadaAPI.Extensions
             services.AddScoped<IEmailService,EmailService>();
             services.AddScoped<IGymMembershipService,GymMembershipService>();
             services.AddScoped<IGymService,GymService>();
+            services.AddScoped<IUserRepository,UserRepository>();
+            StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable(EnvironmentVariables.StripeKey);
+            services.AddScoped<IPaymentService,PaymentService>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddSingleton<IConnectionMultiplexer>( c =>
                 {
