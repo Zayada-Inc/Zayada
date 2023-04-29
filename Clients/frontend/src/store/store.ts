@@ -13,10 +13,14 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 
 import { apiSlice } from 'features/api/apiSlice';
 import { userSlice } from './slices/user';
+import { searchSlice } from './slices/search';
+import { modalSlice } from './slices/modal';
 
 const reducer = combineReducers({
   [apiSlice.reducerPath]: apiSlice.reducer,
   user: userSlice.reducer,
+  search: searchSlice.reducer,
+  modal: modalSlice.reducer,
 });
 
 const persistConfig = {
