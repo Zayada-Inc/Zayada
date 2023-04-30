@@ -1,5 +1,5 @@
 ﻿
-namespace IApplication.Services.Photos
+namespace Infrastructure.Services.Photos
 {
     public class CloudinarySettings
     {

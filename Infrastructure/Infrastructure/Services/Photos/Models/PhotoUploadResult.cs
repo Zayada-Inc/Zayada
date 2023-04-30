@@ -1,4 +1,4 @@
-﻿namespace Application.Services.Photos.Models
+﻿namespace Infrastructure.Services.Photos.Models
 {
     public class PhotoUploadResult
     {

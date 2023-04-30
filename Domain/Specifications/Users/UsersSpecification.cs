@@ -48,6 +48,7 @@ namespace Domain.Specifications.Users
                         break;
                 }
             }
+
         }
     }
 }

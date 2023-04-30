@@ -1,5 +1,5 @@
-﻿using Application.Services.Email;
-using FluentValidation;
+﻿using FluentValidation;
+using Infrastructure.Services.Email;
 
 namespace Application.CommandsQueries.Email.EmailValidator
 {

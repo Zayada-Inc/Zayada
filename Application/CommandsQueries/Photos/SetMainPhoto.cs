@@ -1,15 +1,9 @@
 ﻿using Application.Interfaces;
-using Application.Services.Photos.Interfaces;
 using Domain.Entities;
+using Infrastructure.Services.Photos.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.CommandsQueries.Photos
 {

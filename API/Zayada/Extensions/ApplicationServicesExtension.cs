@@ -4,18 +4,19 @@ using Application.Helpers;
 using FluentValidation.AspNetCore;
 using FluentValidation;
 using Application.CommandsQueries.Gyms;
-using Application.Services.Photos.Interfaces;
-using Application.Services.Photos;
 using Application.Services.Users;
 using Application.Interfaces;
 using StackExchange.Redis;
 using Application.Services.Cache;
-using IApplication.Services.Photos;
-using Application.Services.Email;
 using Application.Services.Membership;
 using Application.Services;
 using Stripe;
 using Infrastructure.Services.Payment;
+using Infrastructure.Services.Photos;
+using Infrastructure.Services.Photos.Interfaces;
+using Infrastructure.Services.Photo;
+using Infrastructure.Interfaces;
+using Infrastructure.Services.Email;
 
 namespace ZayadaAPI.Extensions
 {
