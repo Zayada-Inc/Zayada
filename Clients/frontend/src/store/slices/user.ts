@@ -3,11 +3,11 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IAuthenticationResponse } from 'features/api/types';
 import { RootState } from 'store/store';
 
-type userSliceState = {
+type UserSliceState = {
   data: IAuthenticationResponse;
 };
 
-const initialState: userSliceState = {
+const initialState: UserSliceState = {
   data: {
     displayName: '',
     username: '',
@@ -23,8 +23,7 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<userSliceState>) => {
-      console.log(action.payload, 'userslice');
+    setUser: (state, action: PayloadAction<UserSliceState>) => {
       state.data = action.payload.data;
     },
   },

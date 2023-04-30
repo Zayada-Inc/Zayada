@@ -19,21 +19,26 @@ export interface IAuthenticationResponse {
   token?: string;
 }
 
-export interface IGetAllUsersResponse {
-  data: {
+export interface IPaginatedResponse<T> {
+  pageIndex: number;
+  pageSize: number;
+  count: number;
+  data: T[];
+}
+
+export interface IGetAllUsersResponse extends IPaginatedResponse<IGetAllUsersResponse> {
+  id: string;
+  displayName: string;
+  email: string;
+  username: string;
+  personalTrainer: {
     id: string;
-    displayName: string;
-    email: string;
-    username: string;
-    personalTrainer: {
-      id: string;
-      certifications: string;
-      gymName: string;
-    };
-    photos: {
-      id: string;
-      url: string;
-      isMain: boolean;
-    }[];
+    certifications: string;
+    gymName: string;
+  };
+  photos: {
+    id: string;
+    url: string;
+    isMain: boolean;
   }[];
 }

@@ -25,8 +25,24 @@ export const apiSlice = createApi({
     getPersonalTrainers: builder.query<any, void>({
       query: () => '/PersonalTrainer',
     }),
-    getAllUsers: builder.query<IGetAllUsersResponse, void>({
-      query: () => '/Account/getAllUsers',
+    getAllUsers: builder.query<IGetAllUsersResponse, any>({
+      query: (options) => {
+        const { Search, PageIndex } = options;
+        const params: Record<string, string> = {};
+
+        if (Search) {
+          params.Search = Search;
+        }
+
+        if (PageIndex) {
+          params.PageIndex = PageIndex;
+        }
+
+        return {
+          url: '/Account/getAllUsers',
+          params,
+        };
+      },
     }),
     register: builder.mutation<IAuthenticationResponse, IRegisterRequest>({
       query: (newUser) => ({
