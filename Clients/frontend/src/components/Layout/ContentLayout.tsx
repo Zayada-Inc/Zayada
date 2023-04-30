@@ -1,4 +1,4 @@
-import { Flex, SimpleGrid, createStyles } from '@mantine/core';
+import { Flex, ScrollArea, SimpleGrid, createStyles } from '@mantine/core';
 
 import { Drawer } from 'components/Drawer';
 import { Header } from 'components/Header';
@@ -10,6 +10,25 @@ const useStyles = createStyles((theme) => ({
 
     [theme.fn.smallerThan('sm')]: {
       width: '100%',
+    },
+  },
+
+  scrollArea: {
+    height: `calc(100vh - 60px)`,
+    width: `calc(100vw - 70px)`,
+
+    [theme.fn.smallerThan('sm')]: {
+      width: '100vw',
+    },
+  },
+
+  childrenWrapper: {
+    display: 'flex',
+    justifyContent: 'space-around',
+
+    [theme.fn.smallerThan('sm')]: {
+      flexDirection: 'column',
+      alignItems: 'center',
     },
   },
 }));
@@ -25,7 +44,9 @@ export const ContentLayout = ({ children }: ContentLayoutProps) => {
       <Drawer />
       <Flex direction='column'>
         <Header />
-        <div> {children}</div>
+        <ScrollArea className={classes.scrollArea} type='scroll'>
+          <div className={classes.childrenWrapper}> {children}</div>
+        </ScrollArea>
       </Flex>
     </SimpleGrid>
   );
