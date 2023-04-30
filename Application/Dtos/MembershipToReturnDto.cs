@@ -1,5 +1,4 @@
-﻿
-using Domain.Entities;
+﻿using Infrastructure.Dtos;
 
 namespace Application.Dtos
 {

@@ -1,9 +1,8 @@
 ﻿using Application.CommandsQueries.GymSubscriptionPlan;
 using Application.Interfaces;
-using Application.Services.Payment;
 using Domain.Entities;
 using Domain.Entities.IdentityEntities;
-using Domain.Interfaces;
+using Infrastructure.Services.Payment;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

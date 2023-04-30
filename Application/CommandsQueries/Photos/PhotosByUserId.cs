@@ -1,6 +1,6 @@
 ﻿using Application.Interfaces;
-using Application.Services.Photos.Interfaces;
 using Domain.Entities;
+using Infrastructure.Services.Photos.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;

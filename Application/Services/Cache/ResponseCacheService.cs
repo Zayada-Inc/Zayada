@@ -1,4 +1,4 @@
-﻿using Domain.Interfaces;
+﻿using Application.Interfaces;
 using StackExchange.Redis;
 using System.Text.Json;
 

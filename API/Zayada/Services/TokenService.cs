@@ -1,5 +1,5 @@
 ﻿using Domain.Entities.IdentityEntities;
-using IApplication.Services.Photos;
+using Infrastructure.Services.Photos;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

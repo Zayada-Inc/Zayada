@@ -1,9 +1,21 @@
 import React from 'react';
-import { Checkbox, Table as MantineTable, ScrollArea, rem } from '@mantine/core';
+import {
+  Checkbox,
+  Table as MantineTable,
+  Pagination,
+  ScrollArea,
+  TextInput,
+  rem,
+} from '@mantine/core';
+import { Search } from 'tabler-icons-react';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
+import { SerializedError } from '@reduxjs/toolkit';
 
 import { useTable } from 'components/Table/hooks/useTable';
 import { isPrimitive } from 'utils/isPrimitive';
 import { objectValues } from 'utils/objectValues';
+import { IPaginatedResponse } from 'features/api/types';
+import { isFetchBaseQueryError } from 'utils/isFetchBaseQueryError';
 
 export interface ITableItem {
   id: string;
@@ -18,6 +30,9 @@ type CustomRendersType<T extends ITableItem> = Partial<
 interface TableProps<T extends ITableItem> {
   data: T[];
   headers: TableHeadersType<T>;
+  pagination: Omit<IPaginatedResponse<T>, 'data'>;
+  isFetching: boolean;
+  error: FetchBaseQueryError | SerializedError | undefined;
   onlySelectedHeaders?: boolean;
   customRenders?: CustomRendersType<T>;
   CustomRow?: React.FC<{ item: T }>;
@@ -29,8 +44,21 @@ export const Table = <T extends ITableItem>({
   customRenders,
   CustomRow,
   onlySelectedHeaders = false,
+  pagination,
+  isFetching,
+  error,
 }: TableProps<T>) => {
-  const { classes, cx, selection, toggleAll, toggleRow } = useTable(data);
+  const {
+    classes,
+    cx,
+    selection,
+    toggleAll,
+    toggleRow,
+    activePage,
+    searchQuery,
+    handlePagination,
+    handleSearch,
+  } = useTable(data, isFetching);
 
   const renderRow = (item: T, i: number) => {
     const selected = selection.includes(item.id);
@@ -67,49 +95,84 @@ export const Table = <T extends ITableItem>({
     );
   };
 
-  return (
-    <ScrollArea sx={{ margin: '20px 20px' }}>
-      <MantineTable maw={750} horizontalSpacing='sm' highlightOnHover>
-        <thead>
-          <tr className={classes.header}>
-            <th style={{ width: rem(40) }}>
+  const renderTableBody = () => {
+    if (CustomRow && !error) {
+      return data.map((item, i) => {
+        const selected = selection.includes(item.id);
+
+        return (
+          <tr key={i} className={cx({ [classes.selectedRow]: selected })}>
+            <td>
               <Checkbox
-                onChange={toggleAll}
-                checked={selection.length === data.length}
-                indeterminate={selection.length > 0 && selection.length !== data.length}
-                transitionDuration={0}
+                checked={selection.includes(item.id)}
+                onChange={() => toggleRow(item.id)}
+                transitionDuration={500}
                 color='orange'
               />
-            </th>
-            {objectValues(headers).map((header, i) => (
-              <th key={i} style={{ fontSize: rem(14) }}>
-                {header}
-              </th>
-            ))}
+            </td>
+            <CustomRow item={item} />
           </tr>
-        </thead>
-        <tbody>
-          {CustomRow
-            ? data.map((item, i) => {
-                const selected = selection.includes(item.id);
+        );
+      });
+    }
 
-                return (
-                  <tr key={i} className={cx({ [classes.selectedRow]: selected })}>
-                    <td>
-                      <Checkbox
-                        checked={selection.includes(item.id)}
-                        onChange={() => toggleRow(item.id)}
-                        transitionDuration={500}
-                        color='orange'
-                      />
-                    </td>
-                    <CustomRow item={item} />
-                  </tr>
-                );
-              })
-            : data.map(renderRow)}
-        </tbody>
-      </MantineTable>
-    </ScrollArea>
+    return !error && data.map(renderRow);
+  };
+
+  //TO-DO: make this a separate component
+
+  const renderError = () => {
+    if (isFetchBaseQueryError(error)) {
+      const errorData = error.data as { message: string };
+      const errorMessage = errorData.message || 'Unknown error occured';
+
+      return <div className={classes.errorMessage}>{errorMessage}</div>;
+    }
+  };
+
+  return (
+    <div className={classes.tableWrapper}>
+      <TextInput
+        placeholder='Search by username'
+        onChange={handleSearch}
+        value={searchQuery}
+        icon={<Search size='1.5rem' />}
+        maw={350}
+      />
+      <div className={classes.tablePaginationWrapper}>
+        <ScrollArea>
+          <MantineTable w={750} horizontalSpacing='sm' highlightOnHover mb={rem(8)}>
+            <thead>
+              <tr className={classes.headers}>
+                <th className={classes.checkboxHeader}>
+                  <Checkbox
+                    onChange={toggleAll}
+                    checked={selection.length === data.length}
+                    indeterminate={selection.length > 0 && selection.length !== data.length}
+                    transitionDuration={0}
+                    color='orange'
+                  />
+                </th>
+                {objectValues(headers).map((header, i) => (
+                  <th key={i} style={{ fontSize: rem(14) }}>
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>{renderTableBody()}</tbody>
+          </MantineTable>
+        </ScrollArea>
+        {!error && (
+          <Pagination
+            total={Math.ceil(pagination.count / pagination.pageSize)}
+            onChange={handlePagination}
+            value={activePage}
+            size='sm'
+          />
+        )}
+        {renderError()}
+      </div>
+    </div>
   );
 };

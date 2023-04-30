@@ -1,5 +1,5 @@
-﻿using Application.Dtos;
-using Application.Services;
+﻿using Application.Services;
+using Infrastructure.Dtos;
 using MediatR;
 
 namespace Application.CommandsQueries.GymSubscriptionPlan

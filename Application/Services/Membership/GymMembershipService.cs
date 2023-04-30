@@ -1,10 +1,10 @@
-﻿using Domain.Entities;
+﻿using Application.Interfaces;
+using Domain.Entities;
 using Domain.Entities.IdentityEntities;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Application.Services.Membership
 {

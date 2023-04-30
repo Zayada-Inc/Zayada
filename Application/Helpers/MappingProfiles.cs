@@ -2,6 +2,7 @@
 using AutoMapper;
 using Domain.Entities;
 using Domain.Entities.IdentityEntities;
+using Infrastructure.Dtos;
 
 namespace Application.Helpers
 {
