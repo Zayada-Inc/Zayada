@@ -1,7 +1,7 @@
 ﻿using Application.CommandsQueries.Email.EmailValidator;
-using Application.Services.Email;
-using Domain.Interfaces;
 using FluentValidation;
+using Infrastructure.Interfaces;
+using Infrastructure.Services.Email;
 using MediatR;
 
 namespace Application.CommandsQueries.Email

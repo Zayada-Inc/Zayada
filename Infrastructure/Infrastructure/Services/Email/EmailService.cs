@@ -1,16 +1,14 @@
 ﻿using sib_api_v3_sdk.Client;
 using sib_api_v3_sdk.Model;
 using sib_api_v3_sdk.Api;
-using IApplication.Services.Photos;
-using Domain.Interfaces;
 using Task = System.Threading.Tasks.Task;
+using Infrastructure.Services.Photos;
+using Infrastructure.Interfaces;
 
-namespace Application.Services.Email
+namespace Infrastructure.Services.Email
 {
     public class EmailService : IEmailService
     {
-        private readonly string _smtpServer = "smtp-relay.sendinblue.com";
-        private readonly int _port = 465;
         private readonly string _fromEmail = "zayada.inc@outlook.com";
         private readonly string? apiKey = Environment.GetEnvironmentVariable(EnvironmentVariables.SendInBlueKey);
 

@@ -1,7 +1,7 @@
 ﻿using Domain.Entities;
 using Domain.Entities.IdentityEntities;
 
-namespace Domain.Interfaces
+namespace Application.Interfaces
 {
     public interface IGymMembershipService
     {

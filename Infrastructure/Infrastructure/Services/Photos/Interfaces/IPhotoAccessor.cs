@@ -1,7 +1,7 @@
-﻿using Application.Services.Photos.Models;
+﻿using Infrastructure.Services.Photos.Models;
 using Microsoft.AspNetCore.Http;
 
-namespace Application.Services.Photos.Interfaces
+namespace Infrastructure.Services.Photos.Interfaces
 {
     public interface IPhotoAccessor
     {

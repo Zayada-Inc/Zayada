@@ -1,4 +1,4 @@
-﻿namespace Application.Dtos
+﻿namespace Infrastructure.Dtos
 {
     public class SubscriptionPlanToReturnDto
     {

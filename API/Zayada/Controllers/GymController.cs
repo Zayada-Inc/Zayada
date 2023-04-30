@@ -8,6 +8,7 @@ using Application.Helpers;
 using Application.CommandsQueries.GymSubscriptionPlan;
 using Domain.Specifications.Gyms;
 using Domain.Helpers;
+using Infrastructure.Dtos;
 
 namespace ZayadaAPI.Controllers
 {

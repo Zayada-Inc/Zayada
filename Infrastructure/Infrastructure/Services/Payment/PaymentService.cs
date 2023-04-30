@@ -1,8 +1,7 @@
-﻿using Application.Dtos;
-using Domain.Entities;
+﻿using Infrastructure.Dtos;
 using Stripe.Checkout;
 
-namespace Application.Services.Payment
+namespace Infrastructure.Services.Payment
 {
     public interface IPaymentService
     {
