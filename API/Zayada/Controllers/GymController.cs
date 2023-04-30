@@ -44,7 +44,7 @@ namespace ZayadaAPI.Controllers
         
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPost]
-        public async Task<IActionResult> CreateGym([FromQuery] GymsToPostDto gymToPostDto)
+        public async Task<IActionResult> CreateGym([FromBody] GymsToPostDto gymToPostDto)
         {
             try
             {
