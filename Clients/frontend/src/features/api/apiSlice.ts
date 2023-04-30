@@ -2,13 +2,14 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import {
   IAuthenticationResponse,
   IGetAllUsersResponse,
+  IGetGymResponse,
+  IGetPersonalTrainerResponse,
   ILoginRequest,
   IRegisterRequest,
 } from 'features/api/types/index';
 
 import { BASE_URL } from 'features/api/constants/constants';
 
-// TO-DO: change baseQuery to env variable
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
@@ -22,8 +23,43 @@ export const apiSlice = createApi({
     },
   }),
   endpoints: (builder) => ({
-    getPersonalTrainers: builder.query<any, void>({
-      query: () => '/PersonalTrainer',
+    getPersonalTrainers: builder.query<IGetPersonalTrainerResponse, any>({
+      query: (options) => {
+        const { Search, PageIndex } = options;
+        const params: Record<string, string> = {};
+
+        if (Search) {
+          params.Search = Search;
+        }
+
+        if (PageIndex) {
+          params.PageIndex = PageIndex;
+        }
+
+        return {
+          url: '/PersonalTrainer',
+          params,
+        };
+      },
+    }),
+    getGym: builder.query<IGetGymResponse, any>({
+      query: (options) => {
+        const { Search, PageIndex } = options;
+        const params: Record<string, string> = {};
+
+        if (Search) {
+          params.Search = Search;
+        }
+
+        if (PageIndex) {
+          params.PageIndex = PageIndex;
+        }
+
+        return {
+          url: '/Gym',
+          params,
+        };
+      },
     }),
     getAllUsers: builder.query<IGetAllUsersResponse, any>({
       query: (options) => {
@@ -64,6 +100,7 @@ export const apiSlice = createApi({
 export const {
   useGetPersonalTrainersQuery,
   useGetAllUsersQuery,
+  useGetGymQuery,
   useRegisterMutation,
   useLoginMutation,
 } = apiSlice;

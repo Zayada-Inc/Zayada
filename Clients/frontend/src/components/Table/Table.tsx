@@ -16,6 +16,8 @@ import { isPrimitive } from 'utils/isPrimitive';
 import { objectValues } from 'utils/objectValues';
 import { IPaginatedResponse } from 'features/api/types';
 import { isFetchBaseQueryError } from 'utils/isFetchBaseQueryError';
+import { RootState } from 'store/store';
+import { queryPage } from 'store/slices/search';
 
 export interface ITableItem {
   id: string;
@@ -33,6 +35,9 @@ interface TableProps<T extends ITableItem> {
   pagination: Omit<IPaginatedResponse<T>, 'data'>;
   isFetching: boolean;
   error: FetchBaseQueryError | SerializedError | undefined;
+  handleSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handlePagination: (e: number) => void;
+  getQueryData: (state: RootState) => queryPage;
   onlySelectedHeaders?: boolean;
   customRenders?: CustomRendersType<T>;
   CustomRow?: React.FC<{ item: T }>;
@@ -44,21 +49,18 @@ export const Table = <T extends ITableItem>({
   customRenders,
   CustomRow,
   onlySelectedHeaders = false,
+  handleSearch,
+  handlePagination,
   pagination,
   isFetching,
   error,
+  getQueryData,
 }: TableProps<T>) => {
-  const {
-    classes,
-    cx,
-    selection,
-    toggleAll,
-    toggleRow,
-    activePage,
-    searchQuery,
-    handlePagination,
-    handleSearch,
-  } = useTable(data, isFetching);
+  const { classes, cx, selection, toggleAll, toggleRow, activePage, searchQuery } = useTable(
+    data,
+    isFetching,
+    getQueryData,
+  );
 
   const renderRow = (item: T, i: number) => {
     const selected = selection.includes(item.id);
@@ -119,8 +121,7 @@ export const Table = <T extends ITableItem>({
     return !error && data.map(renderRow);
   };
 
-  //TO-DO: make this a separate component
-
+  // TO-DO: make this a separate component
   const renderError = () => {
     if (isFetchBaseQueryError(error)) {
       const errorData = error.data as { message: string };
@@ -141,7 +142,7 @@ export const Table = <T extends ITableItem>({
       />
       <div className={classes.tablePaginationWrapper}>
         <ScrollArea>
-          <MantineTable w={750} horizontalSpacing='sm' highlightOnHover mb={rem(8)}>
+          <MantineTable w={500} horizontalSpacing='sm' highlightOnHover mb={rem(8)}>
             <thead>
               <tr className={classes.headers}>
                 <th className={classes.checkboxHeader}>

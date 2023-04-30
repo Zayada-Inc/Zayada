@@ -3,14 +3,14 @@ import { createStyles, rem } from '@mantine/core';
 
 import { ITableItem } from 'components/Table';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllUsers, setAllUsersPage, setAllUsersSearch } from 'store/slices/search';
+import { getAllUsers, queryPage, setAllUsersPage, setAllUsersSearch } from 'store/slices/search';
+import { RootState } from 'store/store';
 
 const useStyles = createStyles((theme) => ({
   tableWrapper: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
-    maxWidth: '750px',
   },
 
   tablePaginationWrapper: {
@@ -39,10 +39,14 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export const useTable = <T extends ITableItem>(data: T[], isFetching: boolean) => {
+export const useTable = <T extends ITableItem>(
+  data: T[],
+  isFetching: boolean,
+  getQueryData: (state: RootState) => queryPage,
+) => {
   const [selection, setSelection] = useState<string[]>([]);
   const [hasQueryChanged, setHasQueryChanged] = useState<boolean>(false);
-  const { query: searchQuery, activePage } = useSelector(getAllUsers);
+  const { query: searchQuery, activePage } = useSelector(getQueryData);
   const dispatch = useDispatch();
 
   const { classes, cx } = useStyles();
@@ -58,14 +62,6 @@ export const useTable = <T extends ITableItem>(data: T[], isFetching: boolean) =
       setSelection((current) =>
         current.length === data.length ? [] : data.map((item) => item.id),
       );
-  };
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setAllUsersSearch(e.target.value));
-  };
-
-  const handlePagination = (e: number) => {
-    dispatch(setAllUsersPage(e));
   };
 
   // corner cases covering paginated search
@@ -91,8 +87,6 @@ export const useTable = <T extends ITableItem>(data: T[], isFetching: boolean) =
     toggleAll,
     toggleRow,
     searchQuery,
-    handleSearch,
     activePage,
-    handlePagination,
   };
 };
