@@ -27,7 +27,7 @@ namespace ZayadaAPI.Controllers
 
         [Authorize(Roles = UserRoles.Admin + "," + UserRoles.GymAdmin)]
         [HttpPost]
-        public async Task<ActionResult<PersonalTrainersToPost>> AddTrainer([FromBody] PersonalTrainersToPost personalTrainer)
+        public async Task<ActionResult<PersonalTrainersToPost>> AddTrainer([FromQuery] PersonalTrainersToPost personalTrainer)
         {
             if (personalTrainer == null)
             {
