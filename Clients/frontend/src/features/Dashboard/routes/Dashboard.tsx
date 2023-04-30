@@ -13,6 +13,7 @@ export const Dashboard = () => {
     data: res,
     isLoading,
     isFetching,
+    error,
   } = useGetAllUsersQuery({
     Search: debouncedSearch,
     PageIndex: activePage,
@@ -42,6 +43,7 @@ export const Dashboard = () => {
               data,
               pagination,
               isFetching,
+              error,
             }}
           />
         )}

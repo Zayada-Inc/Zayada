@@ -24,8 +24,8 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
               xs: '0.6rem',
               sm: '0.75rem',
               md: '0.9rem',
-              lg: '1rem',
-              xl: '1.2rem',
+              lg: '1.1rem',
+              xl: '1.5rem',
             },
           }}
           withGlobalStyles

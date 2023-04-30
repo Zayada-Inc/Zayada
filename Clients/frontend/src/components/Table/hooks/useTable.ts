@@ -1,18 +1,41 @@
 import { useEffect, useState } from 'react';
-import { createStyles } from '@mantine/core';
+import { createStyles, rem } from '@mantine/core';
 
 import { ITableItem } from 'components/Table';
-import { useDebouncedValue } from '@mantine/hooks';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllUsers, setAllUsersPage, setAllUsersSearch } from 'store/slices/search';
 
 const useStyles = createStyles((theme) => ({
-  header: {
+  tableWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    maxWidth: '750px',
+  },
+
+  tablePaginationWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginTop: rem(8),
+  },
+
+  checkboxHeader: {
+    width: rem(40),
+  },
+
+  headers: {
     backgroundColor: theme.colors.gray[2],
   },
 
   selectedRow: {
     backgroundColor: theme.colors.gray[0],
+  },
+
+  errorMessage: {
+    color: theme.colors.red[5],
+    fontSize: theme.fontSizes.md,
+    marginTop: '1.5rem',
   },
 }));
 

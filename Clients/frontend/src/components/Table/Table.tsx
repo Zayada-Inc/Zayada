@@ -8,11 +8,14 @@ import {
   rem,
 } from '@mantine/core';
 import { Search } from 'tabler-icons-react';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
+import { SerializedError } from '@reduxjs/toolkit';
 
 import { useTable } from 'components/Table/hooks/useTable';
 import { isPrimitive } from 'utils/isPrimitive';
 import { objectValues } from 'utils/objectValues';
 import { IPaginatedResponse } from 'features/api/types';
+import { isFetchBaseQueryError } from 'utils/isFetchBaseQueryError';
 
 export interface ITableItem {
   id: string;
@@ -29,6 +32,7 @@ interface TableProps<T extends ITableItem> {
   headers: TableHeadersType<T>;
   pagination: Omit<IPaginatedResponse<T>, 'data'>;
   isFetching: boolean;
+  error: FetchBaseQueryError | SerializedError | undefined;
   onlySelectedHeaders?: boolean;
   customRenders?: CustomRendersType<T>;
   CustomRow?: React.FC<{ item: T }>;
@@ -42,6 +46,7 @@ export const Table = <T extends ITableItem>({
   onlySelectedHeaders = false,
   pagination,
   isFetching,
+  error,
 }: TableProps<T>) => {
   const {
     classes,
@@ -90,15 +95,43 @@ export const Table = <T extends ITableItem>({
     );
   };
 
+  const renderTableBody = () => {
+    if (CustomRow && !error) {
+      return data.map((item, i) => {
+        const selected = selection.includes(item.id);
+
+        return (
+          <tr key={i} className={cx({ [classes.selectedRow]: selected })}>
+            <td>
+              <Checkbox
+                checked={selection.includes(item.id)}
+                onChange={() => toggleRow(item.id)}
+                transitionDuration={500}
+                color='orange'
+              />
+            </td>
+            <CustomRow item={item} />
+          </tr>
+        );
+      });
+    }
+
+    return !error && data.map(renderRow);
+  };
+
+  //TO-DO: make this a separate component
+
+  const renderError = () => {
+    if (isFetchBaseQueryError(error)) {
+      const errorData = error.data as { message: string };
+      const errorMessage = errorData.message || 'Unknown error occured';
+
+      return <div className={classes.errorMessage}>{errorMessage}</div>;
+    }
+  };
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        maxWidth: '750px',
-      }}
-    >
+    <div className={classes.tableWrapper}>
       <TextInput
         placeholder='Search by username'
         onChange={handleSearch}
@@ -106,19 +139,12 @@ export const Table = <T extends ITableItem>({
         icon={<Search size='1.5rem' />}
         maw={350}
       />
-      <div
-        style={{
-          // border: '1px solid red',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
+      <div className={classes.tablePaginationWrapper}>
         <ScrollArea>
-          <MantineTable w={750} horizontalSpacing='sm' highlightOnHover>
+          <MantineTable w={750} horizontalSpacing='sm' highlightOnHover mb={rem(8)}>
             <thead>
-              <tr className={classes.header}>
-                <th style={{ width: rem(40) }}>
+              <tr className={classes.headers}>
+                <th className={classes.checkboxHeader}>
                   <Checkbox
                     onChange={toggleAll}
                     checked={selection.length === data.length}
@@ -134,35 +160,18 @@ export const Table = <T extends ITableItem>({
                 ))}
               </tr>
             </thead>
-            <tbody>
-              {CustomRow
-                ? data.map((item, i) => {
-                    const selected = selection.includes(item.id);
-
-                    return (
-                      <tr key={i} className={cx({ [classes.selectedRow]: selected })}>
-                        <td>
-                          <Checkbox
-                            checked={selection.includes(item.id)}
-                            onChange={() => toggleRow(item.id)}
-                            transitionDuration={500}
-                            color='orange'
-                          />
-                        </td>
-                        <CustomRow item={item} />
-                      </tr>
-                    );
-                  })
-                : data.map(renderRow)}
-            </tbody>
+            <tbody>{renderTableBody()}</tbody>
           </MantineTable>
         </ScrollArea>
-        <Pagination
-          total={Math.ceil(pagination.count / pagination.pageSize)}
-          onChange={handlePagination}
-          value={activePage}
-          size='sm'
-        />
+        {!error && (
+          <Pagination
+            total={Math.ceil(pagination.count / pagination.pageSize)}
+            onChange={handlePagination}
+            value={activePage}
+            size='sm'
+          />
+        )}
+        {renderError()}
       </div>
     </div>
   );
