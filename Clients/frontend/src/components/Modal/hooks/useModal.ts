@@ -11,7 +11,19 @@ export const useModal = () => {
     dispatch(setModal({ type: '', isOpen: false }));
   };
 
-  const ModalContent = MODAL_TYPES[type];
+  const computeTitle = (arr: string[]): string => {
+    return arr.reduce((prev: string, curr: string) => {
+      if (curr.charAt(0) === curr.charAt(0).toUpperCase()) {
+        return `${prev}${curr} `;
+      }
+      return `${prev}${curr.charAt(0).toUpperCase() + curr.slice(1)} `;
+    }, '');
+  };
 
-  return { isOpen, handleClose, ModalContent };
+  const ModalContent = MODAL_TYPES[type];
+  const splitByUppercase = type.split(/(?=[A-Z])/);
+
+  const title = computeTitle(splitByUppercase);
+
+  return { isOpen, handleClose, ModalContent, title };
 };

@@ -1,4 +1,8 @@
+import { useDispatch, useSelector } from 'react-redux';
 import { useDebouncedValue } from '@mantine/hooks';
+import { User, UserPlus } from 'tabler-icons-react';
+
+import { Button } from 'components/Button';
 import { ContentLayout } from 'components/Layout';
 import { Table } from 'components/Table';
 import { AllUsersRow } from 'components/Table/Rows/AllUsersRow';
@@ -7,7 +11,7 @@ import {
   useGetGymQuery,
   useGetPersonalTrainersQuery,
 } from 'features/api/apiSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { setModal } from 'store/slices/modal';
 import {
   getAllGym,
   getAllPt,
@@ -19,6 +23,7 @@ import {
   setPtPage,
   setPtSearch,
 } from 'store/slices/search';
+import { Modal } from 'components/Modal';
 
 export const Dashboard = () => {
   const { query: usersQuery, activePage: usersActivePage } = useSelector(getAllUsers);
@@ -118,8 +123,15 @@ export const Dashboard = () => {
     pageSize: gymPageSize,
   };
 
+  const handleAddUserBtn = () => {
+    dispatch(setModal({ type: 'addUser', isOpen: true }));
+  };
+
   return (
     <ContentLayout>
+      <div>
+        <Button text='Add user' Icon={UserPlus} onClick={handleAddUserBtn} />
+      </div>
       <div>
         {isLoading ? (
           <p>loading...</p>
@@ -177,6 +189,7 @@ export const Dashboard = () => {
           handlePagination={handlePtPagination}
         />
       </div>
+      <Modal />
     </ContentLayout>
   );
 };

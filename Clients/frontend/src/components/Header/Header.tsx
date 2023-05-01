@@ -115,7 +115,7 @@ export const Header = () => {
   ));
 
   return (
-    <MantineHeader height={60}>
+    <MantineHeader height={60} sx={{ zIndex: 2 }}>
       <Container className={classes.header}>
         <Text className={classes.welcome}> Welcome back! </Text>
         <Container className={classes.user}>

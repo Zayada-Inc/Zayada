@@ -22,6 +22,7 @@ export const apiSlice = createApi({
       return headers;
     },
   }),
+  tagTypes: ['Users'],
   endpoints: (builder) => ({
     getPersonalTrainers: builder.query<IGetPersonalTrainerResponse, any>({
       query: (options) => {
@@ -79,6 +80,7 @@ export const apiSlice = createApi({
           params,
         };
       },
+      providesTags: ['Users'],
     }),
     register: builder.mutation<IAuthenticationResponse, IRegisterRequest>({
       query: (newUser) => ({
@@ -86,6 +88,7 @@ export const apiSlice = createApi({
         method: 'POST',
         body: newUser,
       }),
+      invalidatesTags: ['Users'],
     }),
     login: builder.mutation<IAuthenticationResponse, ILoginRequest>({
       query: (credentials) => ({
