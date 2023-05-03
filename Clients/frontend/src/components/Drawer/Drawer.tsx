@@ -10,6 +10,7 @@ const useStyles = createStyles((theme) => ({
     backgroundColor: theme.colors.secondaryColors[1],
     height: '100vh',
     border: 'initial',
+    zIndex: 1,
 
     [theme.fn.smallerThan('sm')]: {
       display: 'none',
