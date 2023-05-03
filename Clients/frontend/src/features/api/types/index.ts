@@ -62,3 +62,15 @@ export interface IGetAllUsersResponse extends IPaginatedResponse<IGetAllUsersRes
     isMain: boolean;
   }[];
 }
+
+export interface IPostPT {
+  certifications: string;
+  userId: string;
+  gymId: string;
+}
+
+export interface IPostGym {
+  gymName: string;
+  gymAddress: string;
+  adminUserId: string;
+}

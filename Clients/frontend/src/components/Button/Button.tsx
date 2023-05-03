@@ -1,4 +1,4 @@
-import { Icon, Database } from 'tabler-icons-react';
+import { Icon } from 'tabler-icons-react';
 import { Button as MantineButton } from '@mantine/core';
 
 interface ButtonProps {
@@ -9,7 +9,7 @@ interface ButtonProps {
 
 export const Button = ({ text, onClick, Icon }: ButtonProps) => {
   return (
-    <MantineButton leftIcon={Icon && <Icon />} {...{ onClick }}>
+    <MantineButton leftIcon={Icon && <Icon />} {...{ onClick }} variant='outline'>
       {text}
     </MantineButton>
   );
