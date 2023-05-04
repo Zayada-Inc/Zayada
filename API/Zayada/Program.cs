@@ -135,7 +135,8 @@ try
 {
     var context = scope.ServiceProvider.GetRequiredService<DataContext>();
     context.Database.Migrate();
-
+    if (env.IsDevelopment())
+    {
         try
         {
             var userManager = services.GetRequiredService<UserManager<AppUser>>();
@@ -143,13 +144,13 @@ try
             var mediator = services.GetRequiredService<IMediator>();
             var dataContext = services.GetRequiredService<DataContext>();
             var personalTrainerRepo = services.GetRequiredService<IGenericRepository<PersonalTrainer>>();
-            await DataSeeder.Seed(userManager, roleManager, mediator,dataContext,personalTrainerRepo);
+            await DataSeeder.Seed(userManager, roleManager, mediator, dataContext, personalTrainerRepo);
         }
         catch (Exception ex)
         {
-        throw new Exception(ex.Message);
+            throw new Exception(ex.Message);
         }
-    
+    }
 }
 catch(Exception ex)
 {
