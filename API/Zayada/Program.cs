@@ -139,12 +139,16 @@ try
     {
         try
         {
-            var userManager = services.GetRequiredService<UserManager<AppUser>>();
-            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-            var mediator = services.GetRequiredService<IMediator>();
-            var dataContext = services.GetRequiredService<DataContext>();
-            var personalTrainerRepo = services.GetRequiredService<IGenericRepository<PersonalTrainer>>();
-            await DataSeeder.Seed(userManager, roleManager, mediator, dataContext, personalTrainerRepo);
+            bool shouldSeedData = !context.Gyms.Any();
+            if (shouldSeedData)
+            {
+                var userManager = services.GetRequiredService<UserManager<AppUser>>();
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                var mediator = services.GetRequiredService<IMediator>();
+                var dataContext = services.GetRequiredService<DataContext>();
+                var personalTrainerRepo = services.GetRequiredService<IGenericRepository<PersonalTrainer>>();
+                await DataSeeder.Seed(userManager, roleManager, mediator, dataContext, personalTrainerRepo);
+            }
         }
         catch (Exception ex)
         {
