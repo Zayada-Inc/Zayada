@@ -1,10 +1,17 @@
+using Domain.Entities;
+using Domain.Entities.IdentityEntities;
+using Domain.Interfaces;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Persistence;
+using Persistence.Data.DataSeeder;
+using Persistence.Data.Repository;
 using StackExchange.Redis;
 using ZayadaAPI.Errors;
 using ZayadaAPI.Extensions;
@@ -128,6 +135,22 @@ try
 {
     var context = scope.ServiceProvider.GetRequiredService<DataContext>();
     context.Database.Migrate();
+    if (env.IsDevelopment())
+    {
+        try
+        {
+            var userManager = services.GetRequiredService<UserManager<AppUser>>();
+            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+            var mediator = services.GetRequiredService<IMediator>();
+            var dataContext = services.GetRequiredService<DataContext>();
+            var personalTrainerRepo = services.GetRequiredService<IGenericRepository<PersonalTrainer>>();
+            await DataSeeder.Seed(userManager, roleManager, mediator, dataContext, personalTrainerRepo);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
 }
 catch(Exception ex)
 {
