@@ -1,10 +1,9 @@
 ﻿using Application.CommandsQueries.Gyms.GymValidator;
 using Application.Dtos;
-using Application.Services;
+using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Entities.IdentityEntities;
-using Domain.Interfaces;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;

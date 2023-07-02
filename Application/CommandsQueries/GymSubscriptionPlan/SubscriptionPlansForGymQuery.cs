@@ -1,4 +1,4 @@
-﻿using Application.Services;
+﻿using Application.Interfaces;
 using Infrastructure.Dtos;
 using MediatR;
 
