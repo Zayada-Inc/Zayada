@@ -1,5 +1,5 @@
 ﻿using Application.Dtos;
-using Application.Services;
+using Application.Interfaces;
 using MediatR;
 
 namespace Application.CommandsQueries.Gyms

@@ -3,12 +3,12 @@ using Application.Dtos;
 using Application.Helpers;
 using Application.Interfaces;
 using Domain.Entities.IdentityEntities;
-using Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Persistence;
+using ZayadaAPI.Errors;
 
 namespace ZayadaAPI.Controllers
 {
@@ -83,6 +83,11 @@ namespace ZayadaAPI.Controllers
                         DurationInDays = membership.SubscriptionPlan.DurationInDays,
                     }
                 });
+            }
+
+            if(gymMembershipsDto.Count == 0)
+            {
+                return NotFound(new ApiValidationErrorResponse("No memberships found!"));
             }
             return Ok(gymMembershipsDto);
         }

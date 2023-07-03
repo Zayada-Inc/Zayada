@@ -147,7 +147,8 @@ try
                 var mediator = services.GetRequiredService<IMediator>();
                 var dataContext = services.GetRequiredService<DataContext>();
                 var personalTrainerRepo = services.GetRequiredService<IGenericRepository<PersonalTrainer>>();
-                await DataSeeder.Seed(userManager, roleManager, mediator, dataContext, personalTrainerRepo);
+                var subscriptionRepo = services.GetRequiredService<IGenericRepository<SubscriptionPlan>>();
+                await DataSeeder.Seed(userManager, roleManager, mediator, dataContext, personalTrainerRepo, subscriptionRepo);
             }
         }
         catch (Exception ex)
@@ -159,7 +160,7 @@ try
 catch(Exception ex)
 {
     var logger = services.GetRequiredService<ILogger<Program>>();
-    logger.LogError(ex, "Error in migrations");
+    logger.LogError(ex, "Error in migrations" + ex.Message);
 }
 
 app.Run();
