@@ -119,7 +119,7 @@ export const Header = () => {
       <Container className={classes.header}>
         <Text className={classes.welcome}> Welcome back! </Text>
         <Container className={classes.user}>
-          {photos.length ? (
+          {photos?.length ? (
             <Avatar src={photos[0].url} radius={'xl'} />
           ) : (
             <Skeleton height={40} circle />

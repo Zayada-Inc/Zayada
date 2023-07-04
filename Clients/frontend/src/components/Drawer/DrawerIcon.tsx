@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { Icon } from 'tabler-icons-react';
 import { Tooltip, UnstyledButton, createStyles, rem } from '@mantine/core';
+import { Link } from 'react-router-dom';
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -37,7 +38,7 @@ export interface DrawerIconProps {
   icon: Icon;
   label: string;
   active?: boolean;
-  onClick?: () => void;
+  onClick?: any;
 }
 
 export const DrawerIcon: FC<DrawerIconProps> = ({ icon: Icon, label, active, onClick }) => {
