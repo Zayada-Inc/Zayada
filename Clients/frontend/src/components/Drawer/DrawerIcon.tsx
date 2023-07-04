@@ -38,7 +38,7 @@ export interface DrawerIconProps {
   icon: Icon;
   label: string;
   active?: boolean;
-  onClick?: any;
+  onClick?: () => void;
 }
 
 export const DrawerIcon: FC<DrawerIconProps> = ({ icon: Icon, label, active, onClick }) => {
