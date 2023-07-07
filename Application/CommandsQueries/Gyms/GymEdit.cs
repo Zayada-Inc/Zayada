@@ -13,6 +13,8 @@ namespace Application.CommandsQueries.Gyms
         public class Command : IRequest<GymsToEditDto>
         {
             public GymsToEditDto Gym { get; set; }
+
+            public int Id { get; set; }
         }
 
         public class CommandValidator : AbstractValidator<Command>
@@ -37,7 +39,7 @@ namespace Application.CommandsQueries.Gyms
             public async Task<GymsToEditDto> Handle(Command request, CancellationToken cancellationToken)
             {
                 var gymDto = request.Gym;
-                var gym = await _gymService.GetGymByIdAsync(request.Gym.Id);
+                var gym = await _gymService.GetGymByIdAsync(request.Id);
 
                 if (gym == null)
                 {
@@ -45,6 +47,7 @@ namespace Application.CommandsQueries.Gyms
                 }
 
                 var mapData = _mapper.Map<Gym>(gymDto);
+                mapData.Id = gym.Id;
                 gym.GymName = mapData.GymName ?? gym.GymName;
                 gym.GymAddress = mapData.GymAddress ?? gym.GymAddress;
 

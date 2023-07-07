@@ -10,6 +10,7 @@ namespace Domain.Interfaces
             Task<AppUser> GetEntityWithSpec(ISpecification<AppUser> spec);
             Task<IReadOnlyList<AppUser>> ListAllAsync();
             Task<IReadOnlyList<AppUser>> ListAsync(ISpecification<AppUser> spec);
+            Task<AppUser> UpdateUserAsync(AppUser user);
         }
    
 }

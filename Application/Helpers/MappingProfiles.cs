@@ -33,12 +33,10 @@ namespace Application.Helpers
                 .ForMember(d => d.Id, o => o.Ignore());
 
             CreateMap<GymsToEditDto,Gym>()
-                .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
                 .ForMember(d => d.GymName, o => o.MapFrom(s => s.GymName))
                 .ForMember(d => d.GymAddress, o => o.MapFrom(s => s.GymAddress));
 
             CreateMap<Gym, GymsToEditDto>()
-                .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
                 .ForMember(d => d.GymName, o => o.MapFrom(s => s.GymName))
                 .ForMember(d => d.GymAddress, o => o.MapFrom(s => s.GymAddress));
 
@@ -61,6 +59,19 @@ namespace Application.Helpers
                 .ForMember(d => d.Photos, o => o.MapFrom(s => s.Photos.AsEnumerable().Where(x => x.IsMain == true)))
                 .ForMember(d => d.PersonalTrainer, o => o.MapFrom(s => s.PersonalTrainer));
 
+            CreateMap<AppUser,UserToEditDto>()
+                .ForMember(d => d.Email, o => o.MapFrom( s => s.Email))
+                .ForMember(d => d.DisplayName, o => o.MapFrom(s => s.DisplayName))
+                .ForMember(d => d.Email, o => o.MapFrom(s => s.Email))
+                .ForMember(d => d.Bio, o => o.MapFrom(s => s.Bio))
+                .ForMember(d => d.Username, o => o.MapFrom(s => s.UserName));
+
+            CreateMap<UserToEditDto, AppUser>()
+                .ForMember(d => d.Email, o => o.MapFrom(s => s.Email))
+                .ForMember(d => d.DisplayName, o => o.MapFrom(s => s.DisplayName))
+                .ForMember(d => d.Email, o => o.MapFrom(s => s.Email))
+                .ForMember(d => d.Bio, o => o.MapFrom(s => s.Bio))
+                .ForMember(d => d.UserName, o => o.MapFrom(s => s.Username));
         }
     }
 }

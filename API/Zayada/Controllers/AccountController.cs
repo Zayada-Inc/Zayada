@@ -161,5 +161,16 @@ namespace ZayadaAPI.Controllers
                 return NotFound(new ApiResponse(404));
             return Ok(data);
         }
+
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpPut("updateUser")]
+        public async Task<ActionResult<UserToEditDto>> UpdateUser([FromBody] UserToEditDto userUpdateDto, [FromQuery] string userId)
+        {
+           var data = _mediator.Send(new UserEdit.Command { UserDto = userUpdateDto, Id = userId }).Result;
+            if(data == null)
+                 return NotFound(new ApiResponse(404));
+
+            return Ok(data);
+        }   
     }
 }

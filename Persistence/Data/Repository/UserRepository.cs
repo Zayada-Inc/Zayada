@@ -26,6 +26,23 @@ namespace Persistence.Data.Repository
         {
             return await ApplySpecification(spec).ToListAsync();
         }
+
+        public async Task<AppUser> UpdateUserAsync(AppUser user)
+        {
+            var existingUser = await _context.Users.FindAsync(user.Id);
+            if (existingUser != null)
+            {
+                _context.Entry(existingUser).CurrentValues.SetValues(user);
+                await _context.SaveChangesAsync();
+                return existingUser;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+
         public async Task<AppUser> GetEntityWithSpec(ISpecification<AppUser> spec)
         {
             return await ApplySpecification(spec).FirstOrDefaultAsync();

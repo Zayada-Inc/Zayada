@@ -9,7 +9,6 @@ namespace Application.CommandsQueries.Gyms.GymValidator
         {
             RuleFor(x => x.GymName).NotEmpty();
             RuleFor(x => x.GymAddress).NotEmpty();
-            RuleFor(x => x.Id).GreaterThan(0);
         }
     }
 }

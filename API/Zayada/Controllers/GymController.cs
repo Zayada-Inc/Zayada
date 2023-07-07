@@ -75,11 +75,11 @@ namespace ZayadaAPI.Controllers
 
         [Authorize(Roles = UserRoles.Admin + "," + UserRoles.GymAdmin)]
         [HttpPut("update-gym")]
-        public async Task<IActionResult> UpdateGym([FromBody] GymsToEditDto gym)
+        public async Task<IActionResult> UpdateGym([FromBody] GymsToEditDto gym, [FromQuery] int id)
         {
             try
             {
-                var result = await Mediator.Send(new GymEdit.Command { Gym = gym });
+                var result = await Mediator.Send(new GymEdit.Command { Gym = gym, Id = id });
                 return Ok(result);
             }
             catch (Exception ex)
