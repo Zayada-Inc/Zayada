@@ -25,10 +25,23 @@ namespace Application.Helpers
             CreateMap<PersonalTrainersToPost, PersonalTrainer>()
                 .ForMember(d => d.Gym, o => o.Ignore())
                 .ForMember(d => d.Id, o => o.Ignore());
+
             CreateMap<Gym, GymsToReturnDto>()
                 .ForMember(d => d.Id, o => o.MapFrom(s => s.Id));
+
             CreateMap<GymsToPostDto, Gym>()
-                .ForMember(d => d.Id, o => o.Ignore());  
+                .ForMember(d => d.Id, o => o.Ignore());
+
+            CreateMap<GymsToEditDto,Gym>()
+                .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
+                .ForMember(d => d.GymName, o => o.MapFrom(s => s.GymName))
+                .ForMember(d => d.GymAddress, o => o.MapFrom(s => s.GymAddress));
+
+            CreateMap<Gym, GymsToEditDto>()
+                .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
+                .ForMember(d => d.GymName, o => o.MapFrom(s => s.GymName))
+                .ForMember(d => d.GymAddress, o => o.MapFrom(s => s.GymAddress));
+
             CreateMap<SubscriptionPlanToPostDto, SubscriptionPlan>()
                 .ForMember(d => d.Gym, o => o.Ignore())
                 .ForMember(d => d.Id, o => o.Ignore());

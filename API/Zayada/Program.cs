@@ -11,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Persistence;
 using Persistence.Data.DataSeeder;
-using Persistence.Data.Repository;
 using StackExchange.Redis;
 using ZayadaAPI.Errors;
 using ZayadaAPI.Extensions;

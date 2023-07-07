@@ -73,6 +73,21 @@ namespace ZayadaAPI.Controllers
             }
         }
 
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.GymAdmin)]
+        [HttpPut("update-gym")]
+        public async Task<IActionResult> UpdateGym([FromBody] GymsToEditDto gym)
+        {
+            try
+            {
+                var result = await Mediator.Send(new GymEdit.Command { Gym = gym });
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiValidationErrorResponse(ex.Message));
+            }
+        }
+
         [Cached(60)]
         [Authorize(Roles = UserRoles.Admin + "," + UserRoles.GymAdmin)]
         [HttpGet("getEmployees")]

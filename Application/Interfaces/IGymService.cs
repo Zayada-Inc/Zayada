@@ -11,7 +11,7 @@ namespace Application.Interfaces
         Task<IEnumerable<EmployeeToReturnDto>> GetEmployeesForCurrentGymAsync();
         Task<bool> IsGymAdminForCurrentGymAsync(string userId, int gymId);
         Task<Gym> GetGymByIdAsync(int id);
-
+        Task<Gym> UpdateGymAsync(Gym gym);
         Task<List<SubscriptionPlanToReturnDto>> GetAllPlansForGymAsync(int gymId);
     }
 }

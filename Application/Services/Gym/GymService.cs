@@ -170,6 +170,28 @@ namespace Application.Services
             return await _userManager.IsInRoleAsync(user, roleName);
         }
 
+        public async Task<Gym> UpdateGymAsync(Gym gym)
+        {
+            var currentUser = _userAccesor.GetCurrentUsername();
+            var isGymAdmin = await IsGymAdminForCurrentGymAsync(currentUser, gym.Id);
+
+            if (!isGymAdmin)
+            {
+                throw new Exception("User is not a gym admin.");
+            }
+
+            var gymToUpdate = await _dbContext.Gyms.FindAsync(gym.Id);
+            if (gymToUpdate == null)
+            {
+                throw new Exception("Gym not found.");
+            }
+
+            _dbContext.Entry(gymToUpdate).CurrentValues.SetValues(gym);
+           
+            await _dbContext.SaveChangesAsync();
+            return gymToUpdate;
+        }
+
         public async Task<bool> IsGymAdminForCurrentGymAsync(string userId,int gymId)
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
