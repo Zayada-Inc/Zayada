@@ -4,10 +4,12 @@ export const ICONS_TOP = [
   {
     icon: Home2,
     label: 'Dashboard',
+    route: '/dashboard',
   },
   {
     icon: Calendar,
     label: 'Scheduler',
+    route: '/scheduler',
   },
 ];
 

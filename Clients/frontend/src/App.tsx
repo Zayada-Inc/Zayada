@@ -5,6 +5,7 @@ import { Dashboard } from 'features/Dashboard';
 import { Login, Register } from 'features/auth';
 import { Missing } from 'features/misc';
 import { ProtectedRoute, RoutesLayout } from 'routes';
+import { Scheduler } from 'features/Scheduler';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         {/* protected */}
         <Route element={<ProtectedRoute />}>
           <Route path='dashboard' element={<Dashboard />} />
+          <Route path='scheduler' element={<Scheduler />} />
         </Route>
         {/* missing */}
         <Route path='*' element={<Missing />} />
