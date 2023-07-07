@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { Icon } from 'tabler-icons-react';
 import { Tooltip, UnstyledButton, createStyles, rem } from '@mantine/core';
+import { Link } from 'react-router-dom';
 
 const useStyles = createStyles((theme) => ({
   link: {

@@ -5,10 +5,13 @@ import {
   IGetGymResponse,
   IGetPersonalTrainerResponse,
   ILoginRequest,
+  IPostGym,
+  IPostPT,
   IRegisterRequest,
 } from 'features/api/types/index';
 
 import { BASE_URL } from 'features/api/constants/constants';
+import { handleParams } from './utils/handleParams';
 
 export const apiSlice = createApi({
   reducerPath: 'api',
@@ -22,63 +25,35 @@ export const apiSlice = createApi({
       return headers;
     },
   }),
+  tagTypes: ['Users', 'Gym', 'PT'],
   endpoints: (builder) => ({
     getPersonalTrainers: builder.query<IGetPersonalTrainerResponse, any>({
-      query: (options) => {
-        const { Search, PageIndex } = options;
-        const params: Record<string, string> = {};
-
-        if (Search) {
-          params.Search = Search;
-        }
-
-        if (PageIndex) {
-          params.PageIndex = PageIndex;
-        }
-
-        return {
-          url: '/PersonalTrainer',
-          params,
-        };
-      },
+      query: (options) => handleParams(options, '/PersonalTrainer'),
+      providesTags: ['PT'],
     }),
     getGym: builder.query<IGetGymResponse, any>({
-      query: (options) => {
-        const { Search, PageIndex } = options;
-        const params: Record<string, string> = {};
-
-        if (Search) {
-          params.Search = Search;
-        }
-
-        if (PageIndex) {
-          params.PageIndex = PageIndex;
-        }
-
-        return {
-          url: '/Gym',
-          params,
-        };
-      },
+      query: (options) => handleParams(options, '/Gym'),
+      providesTags: ['Gym'],
     }),
     getAllUsers: builder.query<IGetAllUsersResponse, any>({
-      query: (options) => {
-        const { Search, PageIndex } = options;
-        const params: Record<string, string> = {};
-
-        if (Search) {
-          params.Search = Search;
-        }
-
-        if (PageIndex) {
-          params.PageIndex = PageIndex;
-        }
-
-        return {
-          url: '/Account/getAllUsers',
-          params,
-        };
-      },
+      query: (options) => handleParams(options, '/Account/GetAllUsers'),
+      providesTags: ['Users'],
+    }),
+    addPersonalTrainer: builder.mutation<IPostPT, IPostPT>({
+      query: (newPT) => ({
+        url: '/PersonalTrainer',
+        method: 'POST',
+        body: newPT,
+      }),
+      invalidatesTags: ['PT'],
+    }),
+    addGym: builder.mutation<IPostGym, IPostGym>({
+      query: (newGym) => ({
+        url: '/Gym',
+        method: 'POST',
+        body: newGym,
+      }),
+      invalidatesTags: ['Gym'],
     }),
     register: builder.mutation<IAuthenticationResponse, IRegisterRequest>({
       query: (newUser) => ({
@@ -86,6 +61,7 @@ export const apiSlice = createApi({
         method: 'POST',
         body: newUser,
       }),
+      invalidatesTags: ['Users'],
     }),
     login: builder.mutation<IAuthenticationResponse, ILoginRequest>({
       query: (credentials) => ({
@@ -103,4 +79,6 @@ export const {
   useGetGymQuery,
   useRegisterMutation,
   useLoginMutation,
+  useAddGymMutation,
+  useAddPersonalTrainerMutation,
 } = apiSlice;

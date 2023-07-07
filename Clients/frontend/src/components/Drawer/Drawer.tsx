@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Navbar, Stack, createStyles } from '@mantine/core';
 
 import { Logo } from 'components/Logo';
@@ -10,6 +11,7 @@ const useStyles = createStyles((theme) => ({
     backgroundColor: theme.colors.secondaryColors[1],
     height: '100vh',
     border: 'initial',
+    zIndex: 1,
 
     [theme.fn.smallerThan('sm')]: {
       display: 'none',
@@ -30,11 +32,18 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export const Drawer = () => {
-  const [activeLink, setActiveLink] = useState<number>(0);
+  const location = useLocation();
+  const [activeLink, _] = useState<string>(location.pathname.replace('/', ''));
+  const navigate = useNavigate();
   const { classes } = useStyles();
 
   const linksTop = ICONS_TOP.map((icon, i) => (
-    <DrawerIcon {...icon} key={i} active={i === activeLink} onClick={() => setActiveLink(i)} />
+    <DrawerIcon
+      {...icon}
+      key={i}
+      active={icon.route.replace('/', '') === activeLink}
+      onClick={() => navigate(icon.route)}
+    />
   ));
   const linksBottom = ICONS_BOTTOM.map((icon, i) => <DrawerIcon {...icon} key={i} />);
 

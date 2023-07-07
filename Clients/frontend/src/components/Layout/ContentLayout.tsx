@@ -24,12 +24,7 @@ const useStyles = createStyles((theme) => ({
 
   childrenWrapper: {
     display: 'flex',
-    justifyContent: 'space-around',
-
-    [theme.fn.smallerThan('sm')]: {
-      flexDirection: 'column',
-      alignItems: 'center',
-    },
+    flexDirection: 'column',
   },
 }));
 

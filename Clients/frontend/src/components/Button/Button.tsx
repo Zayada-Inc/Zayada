@@ -1,7 +1,16 @@
+import { Icon } from 'tabler-icons-react';
+import { Button as MantineButton } from '@mantine/core';
+
 interface ButtonProps {
   text: string;
+  onClick: () => void;
+  Icon?: Icon;
 }
 
-export const Button = ({ text }: ButtonProps) => {
-  return <button className='w-3/5 py-1 text-sm py bg-primary-btn'>{text}</button>;
+export const Button = ({ text, onClick, Icon }: ButtonProps) => {
+  return (
+    <MantineButton leftIcon={Icon && <Icon />} {...{ onClick }} variant='outline'>
+      {text}
+    </MantineButton>
+  );
 };
