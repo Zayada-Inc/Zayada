@@ -88,7 +88,7 @@ namespace Persistence.Data.DataSeeder
                                 GymId = i,
                                 UserId = employees[employeeIndex].Id,
                             };
-                            await AddEmployeeToGymAsync(employee, users[i-1].Id, dbContext); // Updated from users to employees
+                            await AddEmployeeToGymAsync(employee, users[i-1].Id, dbContext,roleManager,userManager); // Updated from users to employees
                             if(personalTrainerCount>0)
                             {
                                 var personalTrainer = new PersonalTrainer
@@ -142,7 +142,7 @@ namespace Persistence.Data.DataSeeder
            await subscriptionPlanRepo.AddAsync(subscriptionPlan); 
         }
 
-        public static async Task AddEmployeeToGymAsync(EmployeeToPostDto employee, string requestingUserId, DataContext _dbContext)
+        public static async Task AddEmployeeToGymAsync(EmployeeToPostDto employee, string requestingUserId, DataContext _dbContext,RoleManager<IdentityRole> roleManager,UserManager<AppUser> userManager)
         {
             var mappedEmployee = new Employee
             {
@@ -150,8 +150,18 @@ namespace Persistence.Data.DataSeeder
                 UserId = employee.UserId,
                 Role = UserRoles.GymEmployee
             };
-            _dbContext.Employees.Add(mappedEmployee);
-            await _dbContext.SaveChangesAsync();
+
+            var employeeRoleExists = await roleManager.RoleExistsAsync(UserRoles.GymEmployee);
+            if (!employeeRoleExists)
+            {
+                await roleManager.CreateAsync(new IdentityRole(UserRoles.GymEmployee));
+                await userManager.AddToRoleAsync(await userManager.FindByIdAsync(employee.UserId), UserRoles.GymEmployee);
+            }
+            else
+            {
+                await userManager.AddToRoleAsync(await userManager.FindByIdAsync(employee.UserId), UserRoles.GymEmployee);
+            }
+                await _dbContext.SaveChangesAsync();
         }
 
         private static async Task SeedAdminUser(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
@@ -204,7 +214,7 @@ namespace Persistence.Data.DataSeeder
                 var registerDto = new RegisterDto
                 {
                     DisplayName = $"User{i}",
-                    Email = $"user{i}@example.com",
+                    Email = $"user{i}@zayada.com",
                     Password = $"User{i}123!",
                     Username = $"user{i}"
                 };

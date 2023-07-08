@@ -117,6 +117,18 @@ namespace Application.Services
                 UserId = employee.UserId,
                 Role = UserRoles.GymEmployee
             };
+
+            var employeeRoleExists = await _roleManager.RoleExistsAsync(UserRoles.GymEmployee);
+            if (!employeeRoleExists)
+            {
+                await _roleManager.CreateAsync(new IdentityRole(UserRoles.GymEmployee));
+                await _userManager.AddToRoleAsync(await _userManager.FindByIdAsync(employee.UserId), UserRoles.GymEmployee);
+            }
+            else
+            {
+                await _userManager.AddToRoleAsync(await _userManager.FindByIdAsync(employee.UserId), UserRoles.GymEmployee);
+            }
+
             _dbContext.Employees.Add(mappedEmployee);
             await _dbContext.SaveChangesAsync();
         }
