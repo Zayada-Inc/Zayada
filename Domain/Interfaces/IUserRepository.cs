@@ -11,6 +11,7 @@ namespace Domain.Interfaces
             Task<IReadOnlyList<AppUser>> ListAllAsync();
             Task<IReadOnlyList<AppUser>> ListAsync(ISpecification<AppUser> spec);
             Task<AppUser> UpdateUserAsync(AppUser user);
+            Task<AppUser> DeleteUser(string id);
         }
    
 }

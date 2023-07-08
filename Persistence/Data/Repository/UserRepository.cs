@@ -17,6 +17,21 @@ namespace Persistence.Data.Repository
             return await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
         }
 
+        public async Task<AppUser> DeleteUser(string id)
+        {
+          var existingUser = await _context.Users.FindAsync(id);
+                if (existingUser != null)
+                {
+                    _context.Users.Remove(existingUser);
+                    await _context.SaveChangesAsync();
+                    return existingUser;
+                }
+   
+            
+                    return null;
+            
+        }
+
         public async Task<IReadOnlyList<AppUser>> ListAllAsync()
         {
             return await _context.Users.ToListAsync();

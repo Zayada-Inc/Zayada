@@ -171,6 +171,22 @@ namespace ZayadaAPI.Controllers
                  return NotFound(new ApiResponse(404));
 
             return Ok(data);
-        }   
+        }
+
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpDelete("deleteUser")]
+        public async Task<ActionResult> DeleteUser([FromQuery] string userId)
+        {
+            try { 
+            var data = _mediator.Send(new UserDelete.Command { Id = userId }).Result;
+            if (data == false)
+                return NotFound(new ApiResponse(404));
+            return Ok("deleted");
+                }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiValidationErrorResponse (ex.Message));
+            }
+        }
     }
 }
